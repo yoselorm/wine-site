@@ -329,9 +329,9 @@ const TasteProfileModal = ({ isOpen, onClose, existingProfile }) => {
           <div className="border-t border-zinc-100 pt-8 space-y-8">
             <div>
               <h3 className="text-base font-serif text-zinc-900 mb-1">Fine-tune Your Profile</h3>
-              <p className="text-sm text-zinc-500 font-light">
+              {/* <p className="text-sm text-zinc-500 font-light">
                 These were set from your answers above — adjust anything that doesn't feel right.
-              </p>
+              </p> */}
             </div>
 
             <div>
