@@ -9,6 +9,8 @@ const TasteProfile = () => {
   const { profile, loading, error } = useSelector((state) => state.tasteProfile);
   const [modalOpen, setModalOpen] = useState(false);
 
+  console.log(profile)
+
   useEffect(() => {
     dispatch(fetchTasteProfile());
   }, [dispatch]);

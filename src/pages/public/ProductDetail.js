@@ -131,11 +131,11 @@ const handleToggleWishlist = async () => {
             <div className="flex items-center gap-4 mb-4">
               {isOnSale ? (
                 <>
-                  <span className="text-2xl font-light text-zinc-900">${product.sale_price}</span>
-                  <span className="text-lg font-light text-zinc-400 line-through">${product.price}</span>
+                  <span className="text-2xl font-light text-zinc-900">GHS{product.sale_price}</span>
+                  <span className="text-lg font-light text-zinc-400 line-through">GHS{product.price}</span>
                 </>
               ) : (
-                <span className="text-2xl font-light text-zinc-900">${product.price}</span>
+                <span className="text-2xl font-light text-zinc-900">GHS{product.price}</span>
               )}
             </div>
 

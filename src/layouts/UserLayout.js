@@ -4,6 +4,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { User, Package, Heart, Sparkles, CreditCard, MapPin, ArrowLeft, LogOut, Wine } from 'lucide-react';
 import { logoutUser } from '../redux/authSlice';
 import toast from '../components/Toast';
+import TasteProfileReminderModal from '../components/auth/TasteProfileReminderModal';
 
 const UserLayout = () => {
   const dispatch = useDispatch();
@@ -31,6 +32,8 @@ const UserLayout = () => {
 
   return (
     <div className="min-h-screen bg-zinc-50 flex flex-col">
+        <TasteProfileReminderModal />
+
       {/* Top Bar */}
       <header className="bg-white border-b border-zinc-100 px-8 py-4 flex items-center justify-between sticky top-0 z-30">
         <div className="flex items-center gap-6">

@@ -36,7 +36,7 @@ const handleMoveToCart = (product) => {
 
   if (loading) {
     return (
-      <div className="max-w-7xl mx-auto px-6 py-12 md:py-24">
+      <div className="max-w-7xl mx-auto px-6 ">
         <h1 className="text-3xl font-serif text-zinc-900 mb-8">My Wishlist</h1>
         <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-8 animate-pulse">
           {[...Array(4)].map((_, i) => (

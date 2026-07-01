@@ -3,55 +3,57 @@ import { useDispatch, useSelector } from 'react-redux';
 import { loginUser, registerUser, clearStatus } from '../../redux/authSlice';
 import { X } from 'lucide-react';
 import { createPortal } from 'react-dom';
+import authImage from '../../assets/images/auth.jpg';
 
 const AuthModal = ({ isOpen, onClose }) => {
   const dispatch = useDispatch();
   
-  // Connect to state mapping matching our new user authSlice architecture
   const { loading, error, message } = useSelector((state) => state.auth);
 
   const [isLogin, setIsLogin] = useState(true);
   const [animation, setAnimation] = useState('fade-in'); 
   
-  // Controlled inputs state tracking
   const [formData, setFormData] = useState({
-    name: '',
+    first_name: '',
+    last_name: '',
     email: '',
-    password: ''
+    password: '',
+    password_confirmation: ''
   });
 
   if (!isOpen) return null;
 
-  // Track dynamic input updates safely
   const handleInputChange = (e) => {
     const { id, value } = e.target;
     setFormData((prev) => ({ ...prev, [id]: value }));
   };
 
-  // Pristine screen toggling with Redux cleaning
   const toggleMode = () => {
     setAnimation('fade-out');
-    dispatch(clearStatus()); // Clear any errors/messages from previous form attempts
+    dispatch(clearStatus());
     setTimeout(() => {
       setIsLogin(!isLogin);
       setAnimation('fade-in');
     }, 200); 
   };
 
-  // Submit Handler executing user thunk profiles
   const handleSubmit = async (e) => {
     e.preventDefault();
     
     const targetThunk = isLogin ? loginUser : registerUser;
     const payload = isLogin 
       ? { email: formData.email, password: formData.password } 
-      : formData;
+      : {
+          first_name: formData.first_name,
+          last_name: formData.last_name,
+          email: formData.email,
+          password: formData.password,
+          password_confirmation: formData.password_confirmation,
+        };
 
     const result = await dispatch(targetThunk(payload));
     
-    // Automatically close the modal framework if operations succeed completely
     if (result.meta.requestStatus === 'fulfilled') {
-      // If it was a login, close right away.
       if (isLogin) {
         onClose();
       }
@@ -80,7 +82,7 @@ const AuthModal = ({ isOpen, onClose }) => {
         {/* LEFT SIDE: Atmospheric Imagery (Hidden on Mobile) */}
         <div className="hidden md:block w-1/2 relative">
           <img 
-            src="/images/cellar-barrels-dark.jpg" 
+            src={authImage} 
             alt="Dark wine cellar" 
             className="absolute inset-0 w-full h-full object-cover"
           />
@@ -93,7 +95,7 @@ const AuthModal = ({ isOpen, onClose }) => {
         </div>
 
         {/* RIGHT SIDE: The Authentication Form */}
-        <div className={`w-full md:w-1/2 flex flex-col justify-center px-10 md:px-16 lg:px-20 py-12 transition-opacity duration-200 ${animation === 'fade-in' ? 'opacity-100' : 'opacity-0'}`}>
+        <div className={`w-full md:w-1/2 flex flex-col justify-center px-10 md:px-16 lg:px-20 py-12 overflow-y-auto transition-opacity duration-200 ${animation === 'fade-in' ? 'opacity-100' : 'opacity-0'}`}>
           
           {/* Header */}
           <h2 className="text-4xl font-serif text-zinc-900 mb-3">
@@ -120,24 +122,44 @@ const AuthModal = ({ isOpen, onClose }) => {
 
           {/* Form */}
           <form onSubmit={handleSubmit} className="space-y-10">
-            {/* Name Field (Only on Register) */}
+            {/* Name Fields (Only on Register) */}
             {!isLogin && (
-              <div className="relative group">
-                <input 
-                  type="text" 
-                  id="name"
-                  value={formData.name}
-                  onChange={handleInputChange}
-                  placeholder=" "
-                  required={!isLogin}
-                  className="block w-full pt-6 pb-2 bg-transparent border-0 border-b border-zinc-300 text-zinc-900 text-sm focus:ring-0 focus:border-zinc-900 peer transition-colors"
-                />
-                <label 
-                  htmlFor="name" 
-                  className="absolute text-xs font-bold uppercase tracking-widest text-zinc-500 duration-300 transform -translate-y-4 scale-75 top-4 -z-10 origin-[0] peer-focus:text-zinc-900 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-4"
-                >
-                  Full Name
-                </label>
+              <div className="grid grid-cols-2 gap-6">
+                <div className="relative group">
+                  <input 
+                    type="text" 
+                    id="first_name"
+                    value={formData.first_name}
+                    onChange={handleInputChange}
+                    placeholder=" "
+                    required={!isLogin}
+                    className="block w-full pt-6 pb-2 bg-transparent border-0 border-b border-zinc-300 text-zinc-900 text-sm focus:ring-0 focus:border-zinc-900 peer transition-colors"
+                  />
+                  <label 
+                    htmlFor="first_name" 
+                    className="absolute text-xs font-bold uppercase tracking-widest text-zinc-500 duration-300 transform -translate-y-4 scale-75 top-4 -z-10 origin-[0] peer-focus:text-zinc-900 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-4"
+                  >
+                    First Name
+                  </label>
+                </div>
+
+                <div className="relative group">
+                  <input 
+                    type="text" 
+                    id="last_name"
+                    value={formData.last_name}
+                    onChange={handleInputChange}
+                    placeholder=" "
+                    required={!isLogin}
+                    className="block w-full pt-6 pb-2 bg-transparent border-0 border-b border-zinc-300 text-zinc-900 text-sm focus:ring-0 focus:border-zinc-900 peer transition-colors"
+                  />
+                  <label 
+                    htmlFor="last_name" 
+                    className="absolute text-xs font-bold uppercase tracking-widest text-zinc-500 duration-300 transform -translate-y-4 scale-75 top-4 -z-10 origin-[0] peer-focus:text-zinc-900 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-4"
+                  >
+                    Last Name
+                  </label>
+                </div>
               </div>
             )}
 
@@ -178,6 +200,27 @@ const AuthModal = ({ isOpen, onClose }) => {
                 {isLogin ? 'Password' : 'Create Password'}
               </label>
             </div>
+
+            {/* Confirm Password Field (Only on Register) */}
+            {!isLogin && (
+              <div className="relative group">
+                <input 
+                  type="password" 
+                  id="password_confirmation"
+                  value={formData.password_confirmation}
+                  onChange={handleInputChange}
+                  placeholder=" "
+                  required={!isLogin}
+                  className="block w-full pt-6 pb-2 bg-transparent border-0 border-b border-zinc-300 text-zinc-900 text-sm focus:ring-0 focus:border-zinc-900 peer transition-colors"
+                />
+                <label 
+                  htmlFor="password_confirmation" 
+                  className="absolute text-xs font-bold uppercase tracking-widest text-zinc-500 duration-300 transform -translate-y-4 scale-75 top-4 -z-10 origin-[0] peer-focus:text-zinc-900 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-4"
+                >
+                  Confirm Password
+                </label>
+              </div>
+            )}
 
             {/* Forgot Password (Only on Login) */}
             {isLogin && (

@@ -46,6 +46,19 @@ const extractProfile = (payload) => {
   };
 };
 
+// Add near the bottom, after extractProfile
+export const isTasteProfileComplete = (profile) => {
+  if (!profile) return false;
+  const hasWineColor = profile.preferences?.wine_color?.length > 0;
+  const hasTannin = !!profile.preferences?.tannin_tolerance;
+  const hasAcidity = !!profile.preferences?.acidity_preference;
+  const hasSweetness = !!profile.preferences?.sweetness_tolerance;
+  const hasExperience = !!profile.experience_level;
+  const hasBudget = profile.typical_budget_per_bottle?.min != null && profile.typical_budget_per_bottle?.max != null;
+
+  return hasWineColor && hasTannin && hasAcidity && hasSweetness && hasExperience && hasBudget;
+};
+
 const tasteProfileSlice = createSlice({
   name: 'tasteProfile',
   initialState: {
@@ -91,5 +104,6 @@ const tasteProfileSlice = createSlice({
   },
 });
 
+export const selectIsTasteProfileComplete = (state) => isTasteProfileComplete(state.tasteProfile.profile);
 export const { clearTasteProfileError } = tasteProfileSlice.actions;
 export default tasteProfileSlice.reducer;

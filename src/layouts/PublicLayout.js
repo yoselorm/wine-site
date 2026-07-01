@@ -16,7 +16,7 @@ const PublicLayout = () => {
         <nav className="flex gap-8 text-[11px] font-bold uppercase tracking-widest text-zinc-500">
           <Link to="/shop" className="hover:text-zinc-900 transition-colors">Shop</Link>
           <Link to="/blog" className="hover:text-zinc-900 transition-colors">Blogs</Link>
-          <Link to="/sommelier" className="hover:text-zinc-900 transition-colors">Sommelier</Link>
+          <Link to="/about" className="hover:text-zinc-900 transition-colors">About</Link>
         </nav>
 
         <div className="flex items-center gap-6">
