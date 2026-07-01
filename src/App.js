@@ -1,24 +1,39 @@
-import logo from './logo.svg';
-import './App.css';
+import { Route, Routes } from "react-router-dom";
+import ProtectedRoute from "./auth/ProtectedRoute";
+import UserLayout from "./layouts/UserLayout";
+import PublicLayout from "./layouts/PublicLayout";
+import Home from "./pages/public/Home";
+import Shop from "./pages/public/Shop";
+import ProductDetail from "./pages/public/ProductDetail";
+import Wishlist from "./pages/auth/wishlist";
+import TasteProfile from "./pages/auth/TasteProfile";
+import Orders from "./pages/auth/Orders";
+import Wallet from "./pages/auth/Wallet";
+import Addresses from "./pages/auth/Addresses";
+import Sommelier from "./pages/auth/Sommelier";
+
 
 function App() {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+<Routes>
+  {/* Public Pages */}
+  <Route element={<PublicLayout />}>
+   <Route path="/" element={<Home />} />
+     <Route path="/shop" element={<Shop />} />
+     <Route path="/shop/:slug" element={<ProductDetail />} />
+  </Route>
+
+  {/* Authenticated User Pages */}
+  <Route element={<ProtectedRoute><UserLayout /></ProtectedRoute>}>
+  <Route path="/user/dashboard" element={<div>User Dashboard</div>} />
+   <Route path="/user/orders" element={<Orders />} />
+    <Route path="/user/taste-profile" element={<TasteProfile />} /> 
+    <Route path="/user/wishlist" element={<Wishlist/>} />
+    <Route path="/user/wallet" element={<Wallet />} />
+    <Route path="/user/addresses" element={<Addresses  />} />
+    <Route path="/user/sommelier" element={<Sommelier />} />
+  </Route>
+</Routes>
   );
 }
 
