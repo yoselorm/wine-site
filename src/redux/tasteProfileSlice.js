@@ -54,6 +54,7 @@ export const isTasteProfileComplete = (profile) => {
   const hasAcidity = !!profile.preferences?.acidity_preference;
   const hasSweetness = !!profile.preferences?.sweetness_tolerance;
   const hasExperience = !!profile.experience_level;
+  const hasQuizAnswers = !!profile.quiz;
   const hasBudget = profile.typical_budget_per_bottle?.min != null && profile.typical_budget_per_bottle?.max != null;
 
   return hasWineColor && hasTannin && hasAcidity && hasSweetness && hasExperience && hasBudget;
