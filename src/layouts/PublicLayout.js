@@ -3,6 +3,7 @@ import { Outlet, Link } from 'react-router-dom';
 import { ShoppingBag, Heart, User, Search, Wine } from 'lucide-react';
 import { useSelector } from 'react-redux';
 import AuthModal from '../components/auth/AuthModal';
+import TasteProfileReminderModal from '../components/auth/TasteProfileReminderModal';
 
 const PublicLayout = () => {
   const { isAuthenticated } = useSelector((state) => state.auth);
@@ -10,6 +11,8 @@ const PublicLayout = () => {
 
   return (
     <div className="min-h-screen flex flex-col bg-[#FDFBF7]">
+              <TasteProfileReminderModal />
+
       <header className="fixed w-full z-50 px-8 py-6 flex items-center justify-between bg-white/80 backdrop-blur-md border-b border-zinc-100">
         <Link to="/" className="text-2xl font-serif font-bold tracking-tighter">WINE2U</Link>
         

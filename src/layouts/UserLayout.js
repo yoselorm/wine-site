@@ -5,6 +5,7 @@ import { User, Package, Heart, Sparkles, CreditCard, MapPin, ArrowLeft, LogOut, 
 import { logoutUser } from '../redux/authSlice';
 import toast from '../components/Toast';
 import TasteProfileReminderModal from '../components/auth/TasteProfileReminderModal';
+import TasteQuizModal from '../components/auth/TasteQuizModal';
 
 const UserLayout = () => {
   const dispatch = useDispatch();
