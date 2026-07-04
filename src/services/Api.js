@@ -55,17 +55,17 @@ api.interceptors.request.use(
 //   }
 // );
 
-// api.interceptors.response.use(
-//   (response) => response,
-//   (error) => {
-//     const userData = localStorage.getItem('user_data');
+api.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    const userData = localStorage.getItem('user_data');
 
-//     if (error.response && error.response.status === 401 && userData) {
-//       localStorage.removeItem('user_data');
-//       window.location.href = '/'; 
-//     }
-//         return Promise.reject(error);
-//   }
-// );
+    if (error.response && error.response.status === 401 && userData) {
+      localStorage.removeItem('user_data');
+      window.location.href = '/'; 
+    }
+        return Promise.reject(error);
+  }
+);
 
 export default api;

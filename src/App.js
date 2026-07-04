@@ -9,12 +9,14 @@ import Wishlist from "./pages/auth/wishlist";
 import TasteProfile from "./pages/auth/TasteProfile";
 import Orders from "./pages/auth/Orders";
 import Wallet from "./pages/auth/Wallet";
+import Blogs from "./pages/auth/Blogs";
 import Addresses from "./pages/auth/Addresses";
 import Sommelier from "./pages/auth/Sommelier";
 import About from "./pages/public/About";
 import { useDispatch, useSelector } from "react-redux";
 import { useEffect } from "react";
 import { fetchTasteProfile } from "./redux/tasteProfileSlice";
+import BlogDetail from "./pages/auth/BlogDetail";
 
 
 function App() {
@@ -35,6 +37,8 @@ function App() {
      <Route path="/shop" element={<Shop />} />
      <Route path="/shop/:slug" element={<ProductDetail />} />
      <Route path="/about" element={<About />} />
+      <Route path="/blog" element={<Blogs />} />
+    <Route path="/blog/:id" element={<BlogDetail />} />
   </Route>
 
   {/* Authenticated User Pages */}
@@ -46,6 +50,7 @@ function App() {
     <Route path="/user/wallet" element={<Wallet />} />
     <Route path="/user/addresses" element={<Addresses  />} />
     <Route path="/user/sommelier" element={<Sommelier />} />
+   
   </Route>
 </Routes>
   );
