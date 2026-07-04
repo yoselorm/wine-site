@@ -4,6 +4,7 @@ import { loginUser, registerUser, clearStatus } from '../../redux/authSlice';
 import { X } from 'lucide-react';
 import { createPortal } from 'react-dom';
 import authImage from '../../assets/images/auth.jpg';
+import toast from '../Toast';
 
 const AuthModal = ({ isOpen, onClose }) => {
   const dispatch = useDispatch();
@@ -51,9 +52,11 @@ const AuthModal = ({ isOpen, onClose }) => {
           password_confirmation: formData.password_confirmation,
         };
 
-    const result = await dispatch(targetThunk(payload));
+    const result = await dispatch(targetThunk(payload))
+    ;
     
     if (result.meta.requestStatus === 'fulfilled') {
+      toast.success(isLogin ? 'Welcome back!' : 'Account created successfully!');
       if (isLogin) {
         onClose();
       }
