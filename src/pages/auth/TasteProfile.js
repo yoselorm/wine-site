@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Wine, Pencil, Grape, Sparkles as SparklesIcon, Wallet, GraduationCap, Heart, HeartCrack } from 'lucide-react';
-import { fetchTasteProfile } from '../../redux/tasteProfileSlice';
+import { fetchTasteProfile, selectIsTasteProfileComplete } from '../../redux/tasteProfileSlice';
 import TasteProfileModal from '../../components/auth/TasteProfileModal';
+import TasteQuizModal from '../../components/auth/TasteQuizModal';
 
 const WINE_COLOR_STYLES = {
   red: 'bg-red-900',
@@ -41,8 +42,9 @@ const TasteProfile = () => {
   const dispatch = useDispatch();
   const { profile, loading, error } = useSelector((state) => state.tasteProfile);
   const [modalOpen, setModalOpen] = useState(false);
+  const [quizModalOpen, setQuizModalOpen] = useState(false);
+  const isComplete = useSelector(selectIsTasteProfileComplete);
 
-  console.log(profile)
   useEffect(() => {
     dispatch(fetchTasteProfile());
   }, [dispatch]);
@@ -79,16 +81,17 @@ const TasteProfile = () => {
             <h1 className="text-3xl lg:text-4xl font-serif text-zinc-900 mb-2">Taste Profile</h1>
             <p className="text-sm text-zinc-500 font-light">Used to personalize your recommendations</p>
           </div>
+         {isComplete && (
           <button
             onClick={() => setModalOpen(true)}
             className="flex items-center gap-2 text-[11px] font-bold uppercase tracking-widest border border-zinc-900 px-5 py-3 hover:bg-zinc-900 hover:text-white transition-colors shrink-0"
           >
             <Pencil size={13} />
             {profile ? 'Edit' : 'Set Up'}
-          </button>
+          </button>)}
         </div>
 
-        {!profile ? (
+        {!isComplete ? (
           <div className="flex flex-col items-center justify-center py-24 text-center bg-zinc-50 rounded-lg">
             <Wine size={40} strokeWidth={1} className="text-zinc-300 mb-6" />
             <h2 className="text-xl font-serif text-zinc-900 mb-3">No taste profile yet</h2>
@@ -96,7 +99,7 @@ const TasteProfile = () => {
               Tell us what you like and we'll tailor recommendations to your palate.
             </p>
             <button
-              onClick={() => setModalOpen(true)}
+              onClick={() => setQuizModalOpen(true)}
               className="bg-zinc-900 text-white px-8 py-4 text-[11px] font-bold uppercase tracking-widest hover:bg-zinc-800 transition-colors"
             >
               Build My Profile
@@ -220,6 +223,11 @@ const TasteProfile = () => {
       <TasteProfileModal
         isOpen={modalOpen}
         onClose={() => setModalOpen(false)}
+        existingProfile={profile}
+      />
+      <TasteQuizModal
+        isOpen={quizModalOpen}
+        onClose={() => setQuizModalOpen(false)}
         existingProfile={profile}
       />
     </>
