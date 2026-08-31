@@ -119,7 +119,7 @@ const TasteProfileModal = ({ isOpen, onClose, existingProfile }) => {
       type="button"
       onClick={onClick}
       className={`px-3 py-1.5 text-[11px] font-bold uppercase tracking-wide border rounded-full transition-colors capitalize ${
-        active ? 'bg-zinc-900 text-white border-zinc-900' : 'border-zinc-200 text-zinc-600 hover:border-zinc-400'
+        active ? 'bg-forest text-white border-forest' : 'border-zinc-200 text-zinc-600 hover:border-forest/50'
       }`}
     >
       {children}
@@ -138,7 +138,7 @@ const TasteProfileModal = ({ isOpen, onClose, existingProfile }) => {
           show ? 'opacity-100 scale-100 translate-y-0' : 'opacity-0 scale-95 translate-y-3'
         }`}
       >
-        <button onClick={onClose} className="absolute top-4 right-4 text-zinc-400 hover:text-zinc-900 transition-colors">
+        <button onClick={onClose} className="absolute top-4 right-4 text-zinc-400 hover:text-forest transition-colors">
           <X size={18} />
         </button>
 
@@ -166,7 +166,7 @@ const TasteProfileModal = ({ isOpen, onClose, existingProfile }) => {
                   key={opt}
                   onClick={() => setForm((p) => ({ ...p, tannin_tolerance: opt }))}
                   className={`py-2 text-[11px] font-bold uppercase tracking-wide border rounded-md transition-colors capitalize ${
-                    form.tannin_tolerance === opt ? 'bg-zinc-900 text-white border-zinc-900' : 'border-zinc-200 text-zinc-600 hover:border-zinc-400'
+                    form.tannin_tolerance === opt ? 'bg-forest text-white border-forest' : 'border-zinc-200 text-zinc-600 hover:border-forest/50'
                   }`}
                 >
                   {opt}
@@ -184,7 +184,7 @@ const TasteProfileModal = ({ isOpen, onClose, existingProfile }) => {
                   key={opt}
                   onClick={() => setForm((p) => ({ ...p, acidity_preference: opt }))}
                   className={`py-2 text-[11px] font-bold uppercase tracking-wide border rounded-md transition-colors capitalize ${
-                    form.acidity_preference === opt ? 'bg-zinc-900 text-white border-zinc-900' : 'border-zinc-200 text-zinc-600 hover:border-zinc-400'
+                    form.acidity_preference === opt ? 'bg-forest text-white border-forest' : 'border-zinc-200 text-zinc-600 hover:border-forest/50'
                   }`}
                 >
                   {opt}
@@ -202,7 +202,7 @@ const TasteProfileModal = ({ isOpen, onClose, existingProfile }) => {
                   key={opt}
                   onClick={() => setForm((p) => ({ ...p, sweetness_tolerance: opt }))}
                   className={`py-2 text-[10px] font-bold uppercase tracking-wide border rounded-md transition-colors capitalize ${
-                    form.sweetness_tolerance === opt ? 'bg-zinc-900 text-white border-zinc-900' : 'border-zinc-200 text-zinc-600 hover:border-zinc-400'
+                    form.sweetness_tolerance === opt ? 'bg-forest text-white border-forest' : 'border-zinc-200 text-zinc-600 hover:border-forest/50'
                   }`}
                 >
                   {opt}
@@ -265,7 +265,7 @@ const TasteProfileModal = ({ isOpen, onClose, existingProfile }) => {
                 placeholder="Min"
                 value={form.budget_min}
                 onChange={(e) => setForm((p) => ({ ...p, budget_min: e.target.value }))}
-                className="w-full p-3 border border-zinc-200 text-sm rounded-md focus:outline-none focus:border-zinc-900 transition-colors"
+                className="w-full p-3 border border-zinc-200 text-sm rounded-md focus:outline-none focus:border-forest transition-colors"
               />
               <span className="text-zinc-300">—</span>
               <input
@@ -273,7 +273,7 @@ const TasteProfileModal = ({ isOpen, onClose, existingProfile }) => {
                 placeholder="No max"
                 value={form.budget_max}
                 onChange={(e) => setForm((p) => ({ ...p, budget_max: e.target.value }))}
-                className="w-full p-3 border border-zinc-200 text-sm rounded-md focus:outline-none focus:border-zinc-900 transition-colors"
+                className="w-full p-3 border border-zinc-200 text-sm rounded-md focus:outline-none focus:border-forest transition-colors"
               />
             </div>
           </div>
@@ -283,7 +283,7 @@ const TasteProfileModal = ({ isOpen, onClose, existingProfile }) => {
             <select
               value={form.experience_level}
               onChange={(e) => setForm((p) => ({ ...p, experience_level: e.target.value }))}
-              className="w-full border-b border-zinc-300 py-2 bg-transparent outline-none cursor-pointer text-sm text-zinc-800 hover:border-zinc-900 transition-colors capitalize"
+              className="w-full border-b border-zinc-300 py-2 bg-transparent outline-none cursor-pointer text-sm text-zinc-800 hover:border-forest transition-colors capitalize"
             >
               <option value="">Select level</option>
               {EXPERIENCE_OPTIONS.map((opt) => (
@@ -295,7 +295,7 @@ const TasteProfileModal = ({ isOpen, onClose, existingProfile }) => {
           <button
             type="submit"
             disabled={saving}
-            className="w-full bg-zinc-900 text-white py-3 text-xs font-bold uppercase tracking-widest hover:bg-zinc-800 transition-colors rounded-md disabled:bg-zinc-400 disabled:cursor-not-allowed"
+            className="w-full bg-forest text-white py-3 text-xs font-bold uppercase tracking-widest hover:bg-forest-dark transition-colors duration-300 rounded-md disabled:bg-zinc-400 disabled:cursor-not-allowed"
           >
             {saving ? 'Saving...' : 'Save Taste Profile'}
           </button>

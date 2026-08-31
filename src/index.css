@@ -4,4 +4,5 @@
 
 html {
   zoom: 95%;
+  scroll-behavior: smooth;
 }

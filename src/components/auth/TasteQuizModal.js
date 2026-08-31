@@ -87,7 +87,7 @@ const TasteQuizModal = ({ isOpen, onClose, existingProfile }) => {
               {answeredCount} of {QUESTIONS.length} answered
             </p>
           </div>
-          <button onClick={onClose} className="text-zinc-400 hover:text-zinc-900 transition-colors shrink-0">
+          <button onClick={onClose} className="text-zinc-400 hover:text-forest transition-colors shrink-0">
             <X size={18} />
           </button>
         </div>
@@ -115,13 +115,13 @@ const TasteQuizModal = ({ isOpen, onClose, existingProfile }) => {
                         onClick={() => selectSingle(question.key, opt.letter)}
                         className={`w-full flex items-center gap-3 text-left px-4 py-3 border rounded-lg text-sm transition-colors ${
                           currentAnswer === opt.letter
-                            ? 'border-zinc-900 bg-zinc-50 text-zinc-900 font-medium'
+                            ? 'border-forest bg-cream text-forest font-medium'
                             : 'border-zinc-200 text-zinc-600 hover:border-zinc-400'
                         }`}
                       >
                         <span
                           className={`w-5 h-5 rounded-full border flex items-center justify-center shrink-0 text-[10px] font-bold ${
-                            currentAnswer === opt.letter ? 'bg-zinc-900 border-zinc-900 text-white' : 'border-zinc-300 text-zinc-400'
+                            currentAnswer === opt.letter ? 'bg-forest border-forest text-white' : 'border-zinc-300 text-zinc-400'
                           }`}
                         >
                           {currentAnswer === opt.letter ? <Check size={12} /> : opt.letter}
@@ -141,13 +141,13 @@ const TasteQuizModal = ({ isOpen, onClose, existingProfile }) => {
                             onClick={() => toggleMulti(question.key, opt.value)}
                             className={`w-full flex items-center gap-3 text-left px-4 py-3 border rounded-lg text-sm transition-colors ${
                               selected
-                                ? 'border-zinc-900 bg-zinc-50 text-zinc-900 font-medium'
+                                ? 'border-forest bg-cream text-forest font-medium'
                                 : 'border-zinc-200 text-zinc-600 hover:border-zinc-400'
                             }`}
                           >
                             <span
                               className={`w-5 h-5 rounded border flex items-center justify-center shrink-0 ${
-                                selected ? 'bg-zinc-900 border-zinc-900 text-white' : 'border-zinc-300'
+                                selected ? 'bg-forest border-forest text-white' : 'border-zinc-300'
                               }`}
                             >
                               {selected && <Check size={12} />}
@@ -161,7 +161,7 @@ const TasteQuizModal = ({ isOpen, onClose, existingProfile }) => {
                         onClick={() => selectNone(question.key)}
                         className={`w-full text-left px-4 py-3 border rounded-lg text-sm transition-colors ${
                           Array.isArray(currentAnswer) && currentAnswer.length === 0
-                            ? 'border-zinc-900 bg-zinc-50 text-zinc-900 font-medium'
+                            ? 'border-forest bg-cream text-forest font-medium'
                             : 'border-zinc-200 text-zinc-500 hover:border-zinc-400'
                         }`}
                       >
@@ -179,7 +179,7 @@ const TasteQuizModal = ({ isOpen, onClose, existingProfile }) => {
           <button
             onClick={handleSubmit}
             disabled={!complete || submitting}
-            className="w-full bg-zinc-900 text-white py-3 text-xs font-bold uppercase tracking-widest hover:bg-zinc-800 transition-colors rounded-md disabled:bg-zinc-300 disabled:cursor-not-allowed"
+            className="w-full bg-forest text-white py-3 text-xs font-bold uppercase tracking-widest hover:bg-forest-dark transition-colors duration-300 rounded-md disabled:bg-zinc-300 disabled:cursor-not-allowed"
           >
             {submitting ? 'Saving...' : complete ? 'Save Taste Profile' : `Answer ${QUESTIONS.length - answeredCount} more question${QUESTIONS.length - answeredCount === 1 ? '' : 's'}`}
           </button>

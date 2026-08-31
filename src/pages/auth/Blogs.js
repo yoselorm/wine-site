@@ -1,9 +1,10 @@
-// src/pages/blog/Blog.jsx
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { ArrowRight } from 'lucide-react';
 import api from '../../services/Api';
 import { api_url } from '../../utils/config';
+import SectionBanner from '../../components/public/shared/SectionBanner';
+import { getInitials, getAvatarColor } from '../../utils/placeholders';
+import fallbackHero from '../../assets/images/fallbackbloghero.jpg';
 
 const Blogs = () => {
   const [blogs, setBlogs] = useState([]);
@@ -14,7 +15,6 @@ const Blogs = () => {
     const fetchBlogs = async () => {
       try {
         const response = await api.get(`${api_url}/v1/blogs`);
-        // Adjust depending on your API's exact pagination structure (e.g., response.data.data)
         setBlogs(response.data?.data || response.data || []);
       } catch (err) {
         setError('Failed to load the journal entries.');
@@ -28,77 +28,105 @@ const Blogs = () => {
 
   if (loading) {
     return (
-      <div className="max-w-7xl mx-auto px-6 py-24 animate-pulse">
-        <div className="h-12 w-64 bg-zinc-200 mb-16 mx-auto"></div>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-12">
-          {[...Array(6)].map((_, i) => (
-            <div key={i} className="space-y-4">
-              <div className="h-64 bg-zinc-200 w-full"></div>
-              <div className="h-4 bg-zinc-200 w-24"></div>
-              <div className="h-6 bg-zinc-200 w-3/4"></div>
-            </div>
-          ))}
+      <div className="bg-cream min-h-screen">
+        <SectionBanner title="Our Blog" />
+        <div className="max-w-7xl mx-auto px-6 py-24 animate-pulse">
+          <div className="h-96 w-full bg-zinc-200 mb-16"></div>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
+            {[...Array(6)].map((_, i) => (
+              <div key={i} className="space-y-4">
+                <div className="h-48 bg-zinc-200 w-full"></div>
+                <div className="h-4 bg-zinc-200 w-24"></div>
+                <div className="h-6 bg-zinc-200 w-3/4"></div>
+              </div>
+            ))}
+          </div>
         </div>
       </div>
     );
   }
 
   if (error) {
-    return <div className="text-center py-24 text-red-500 font-serif text-xl">{error}</div>;
+    return (
+      <div className="bg-cream min-h-screen">
+        <SectionBanner title="Our Blog" />
+        <div className="text-center py-24 text-wine font-serif text-xl">{error}</div>
+      </div>
+    );
   }
 
-  return (
-    <div className="bg-[#FDFBF7] min-h-screen pb-24">
-      {/* Header */}
-      <div className="pt-24 pb-16 px-6 text-center max-w-3xl mx-auto">
-        <h4 className="text-[10px] font-bold uppercase tracking-[0.3em] text-zinc-400 mb-6">The Cellar Journal</h4>
-        <h1 className="text-4xl md:text-5xl font-serif text-zinc-900 mb-6">
-          Notes on culture, regions, and the art of winemaking.
-        </h1>
-      </div>
+  const [featured, ...rest] = blogs;
 
-      {/* Blog Grid */}
-      <div className="max-w-7xl mx-auto px-6">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-y-16 gap-x-12">
-          {blogs.map((post) => (
+  return (
+    <div className="bg-cream min-h-screen">
+      <SectionBanner title="Our Blog" breadcrumbs={[{ label: 'Be informed about our latest findings and wine tutorials' }]} />
+
+      {featured && (
+        <Link to={`/blog/${featured.slug}`} className="block relative h-[50vh] min-h-[360px] overflow-hidden group">
+          <img
+            src={featured.featured_image_url || fallbackHero}
+            alt={featured.title}
+            className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+          />
+          <div className="absolute inset-0 bg-forest-dark/50" />
+          <div className="absolute inset-0 flex flex-col justify-end p-8 md:p-14">
+            <p className="text-gold-light text-[11px] font-bold uppercase tracking-widest mb-3">Featured Story</p>
+            <p className="text-cream/70 text-xs mb-2">
+              {new Date(featured.published_at || featured.created_at).toLocaleDateString('en-US', { day: '2-digit', month: 'long', year: 'numeric' })}
+            </p>
+            <h2 className="font-serif text-2xl md:text-4xl text-white max-w-2xl">{featured.title}</h2>
+          </div>
+          <span
+            className="absolute top-8 right-8 w-10 h-10 rounded-full flex items-center justify-center text-white text-xs font-bold"
+            style={{ backgroundColor: getAvatarColor(featured.author?.name || 'W2U') }}
+          >
+            {getInitials(featured.author?.name || 'W2U')}
+          </span>
+        </Link>
+      )}
+
+      <div className="max-w-7xl mx-auto px-6 py-20">
+        <h2 className="font-serif text-3xl text-zinc-900 mb-14 text-center">Wine News From Around The Globe</h2>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-y-14 gap-x-10">
+          {(rest.length > 0 ? rest : blogs).map((post) => (
             <article key={post.id} className="group flex flex-col">
-              <Link to={`/blog/${post.slug}`} className="block mb-6 overflow-hidden bg-zinc-100 aspect-[4/3]">
-                <img 
-                  src={post.image_url || 'https://images.unsplash.com/photo-1506377247377-2a5b3b417ebb?auto=format&fit=crop&w=800&q=80'} 
-                  alt={post.title} 
+              <Link to={`/blog/${post.slug}`} className="block mb-5 overflow-hidden bg-white aspect-[4/3]">
+                <img
+                  src={post.featured_image_url || fallbackHero}
+                  alt={post.title}
                   className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
                 />
               </Link>
-              
-              <div className="flex items-center gap-3 text-[10px] font-bold uppercase tracking-widest text-zinc-500 mb-3">
-                <span>{new Date(post.created_at).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}</span>
-                {post.category && (
-                  <>
-                    <span className="w-1 h-1 bg-zinc-300 rounded-full"></span>
-                    <span>{post.category.name}</span>
-                  </>
-                )}
-              </div>
 
               <Link to={`/blog/${post.slug}`}>
-                <h2 className="text-2xl font-serif text-zinc-900 mb-3 group-hover:text-zinc-600 transition-colors">
-                  {post.title}
-                </h2>
+                <h3 className="font-serif text-lg text-zinc-900 mb-2 group-hover:text-forest transition-colors">{post.title}</h3>
               </Link>
 
-              <p className="text-zinc-600 font-light text-sm line-clamp-3 mb-6 flex-1">
-                {post.excerpt || post.content?.substring(0, 150) + '...'}
+              <p className="text-zinc-500 font-light text-sm line-clamp-2 mb-4 flex-1">
+                {post.excerpt || post.content?.substring(0, 120) + '...'}
               </p>
 
-              <Link 
-                to={`/blog/${post.slug}`} 
-                className="inline-flex items-center gap-2 text-[11px] font-bold uppercase tracking-widest text-zinc-900 mt-auto hover:text-zinc-500 transition-colors"
-              >
-                Read Article <ArrowRight size={14} />
-              </Link>
+              <div className="flex items-center gap-3">
+                <span
+                  className="w-7 h-7 rounded-full flex items-center justify-center text-white text-[10px] font-bold"
+                  style={{ backgroundColor: getAvatarColor(post.author?.name || post.id) }}
+                >
+                  {getInitials(post.author?.name || 'W2U')}
+                </span>
+                <span className="text-xs text-zinc-500">{post.author?.name || 'Editorial Team'}</span>
+              </div>
             </article>
           ))}
         </div>
+
+        {blogs.length > 0 && (
+          <div className="flex justify-center mt-16">
+            <button className="border border-forest text-forest px-10 py-3 text-[11px] font-bold uppercase tracking-widest hover:bg-forest hover:text-white transition-colors">
+              Read More Articles
+            </button>
+          </div>
+        )}
       </div>
     </div>
   );

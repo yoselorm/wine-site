@@ -56,11 +56,11 @@ const TasteProfileReminderModal = () => {
                 show ? 'opacity-100 scale-100 translate-y-0' : 'opacity-0 scale-95 translate-y-3'
               }`}
             >
-              <button onClick={() => dismiss()} className="absolute top-4 right-4 text-zinc-400 hover:text-zinc-900 transition-colors">
+              <button onClick={() => dismiss()} className="absolute top-4 right-4 text-zinc-400 hover:text-forest transition-colors">
                 <X size={18} />
               </button>
 
-              <div className="w-14 h-14 mx-auto rounded-full bg-zinc-900 flex items-center justify-center mb-5">
+              <div className="w-14 h-14 mx-auto rounded-full bg-forest flex items-center justify-center mb-5">
                 <Sparkles size={22} className="text-white" />
               </div>
 
@@ -71,13 +71,13 @@ const TasteProfileReminderModal = () => {
 
               <button
                 onClick={handleCompleteNow}
-                className="w-full bg-zinc-900 text-white py-3 text-xs font-bold uppercase tracking-widest hover:bg-zinc-800 transition-colors rounded-md mb-3"
+                className="w-full bg-forest text-white py-3 text-xs font-bold uppercase tracking-widest hover:bg-forest-dark transition-colors duration-300 rounded-md mb-3"
               >
                 Complete Now
               </button>
               <button
                 onClick={() => dismiss()}
-                className="text-[11px] text-zinc-400 hover:text-zinc-900 transition-colors"
+                className="text-[11px] text-zinc-400 hover:text-forest transition-colors"
               >
                 Remind me later
               </button>

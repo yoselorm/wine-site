@@ -39,7 +39,7 @@ const Orders = () => {
         <p className="text-red-500 mb-4">{error}</p>
         <button
           onClick={() => dispatch(fetchOrders())}
-          className="text-xs font-bold uppercase tracking-widest border-b border-zinc-900 pb-1"
+          className="text-xs font-bold uppercase tracking-widest border-b border-forest pb-1 hover:text-forest transition-colors"
         >
           Try Again
         </button>
@@ -57,7 +57,7 @@ const Orders = () => {
         </p>
         <Link
           to="/shop"
-          className="bg-zinc-900 text-white px-8 py-4 text-[11px] font-bold uppercase tracking-widest hover:bg-zinc-800 transition-colors"
+          className="bg-forest text-white px-8 py-4 text-[11px] font-bold uppercase tracking-widest hover:bg-forest-dark transition-colors duration-300"
         >
           Start Shopping
         </Link>
@@ -79,31 +79,31 @@ const Orders = () => {
             <Link
               key={order.id}
               to={`/orders/${order.id}`}
-              className="group flex items-center justify-between py-6 hover:bg-zinc-50 transition-colors -mx-6 px-6"
+              className="group flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 py-6 hover:bg-zinc-50 transition-colors -mx-4 sm:-mx-6 px-4 sm:px-6"
             >
-              <div className="flex items-center gap-6">
-                <div className="w-14 h-14 bg-zinc-100 flex items-center justify-center shrink-0">
-                  <Package size={20} className="text-zinc-400" />
+              <div className="flex items-center gap-4 sm:gap-6 min-w-0">
+                <div className="w-12 h-12 sm:w-14 sm:h-14 bg-zinc-100 flex items-center justify-center shrink-0">
+                  <Package size={18} className="text-zinc-400" />
                 </div>
-                <div>
-                  <p className="font-serif text-lg text-zinc-900 mb-1">
+                <div className="min-w-0">
+                  <p className="font-serif text-base sm:text-lg text-zinc-900 mb-1 truncate">
                     Order #{order.order_number || order.id}
                   </p>
-                  <p className="text-xs text-zinc-400 font-light">
+                  <p className="text-xs text-zinc-400 font-light truncate">
                     {order.created_at ? new Date(order.created_at).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' }) : ''}
                     {order.items?.length ? ` · ${order.items.length} ${order.items.length === 1 ? 'item' : 'items'}` : ''}
                   </p>
                 </div>
               </div>
 
-              <div className="flex items-center gap-6">
-                <span className={`text-[10px] font-bold uppercase tracking-widest px-3 py-1.5 border rounded-full ${statusStyle}`}>
+              <div className="flex items-center justify-between sm:justify-end gap-3 sm:gap-6 pl-16 sm:pl-0">
+                <span className={`text-[10px] font-bold uppercase tracking-widest px-3 py-1.5 border rounded-full shrink-0 ${statusStyle}`}>
                   {order.status || 'Pending'}
                 </span>
-                <span className="text-sm font-light text-zinc-900 w-20 text-right">
+                <span className="text-sm font-light text-zinc-900 sm:w-20 text-right shrink-0">
                   GHS {Number(order.total || order.total_amount || 0).toFixed(2)}
                 </span>
-                <ChevronRight size={16} className="text-zinc-300 group-hover:text-zinc-900 transition-colors" />
+                <ChevronRight size={16} className="text-zinc-300 group-hover:text-forest transition-colors shrink-0 hidden sm:block" />
               </div>
             </Link>
           );

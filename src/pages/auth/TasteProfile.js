@@ -29,7 +29,7 @@ const ScaleBar = ({ levels, value, label }) => {
           <div
             key={level}
             className={`h-1.5 flex-1 rounded-full transition-colors ${
-              activeIndex >= 0 && i <= activeIndex ? 'bg-zinc-900' : 'bg-zinc-100'
+              activeIndex >= 0 && i <= activeIndex ? 'bg-forest' : 'bg-zinc-100'
             }`}
           />
         ))}
@@ -63,7 +63,7 @@ const TasteProfile = () => {
     return (
       <div className="max-w-3xl mx-auto px-6 py-24 text-center">
         <p className="text-red-500 mb-4">{error}</p>
-        <button onClick={() => dispatch(fetchTasteProfile())} className="text-xs font-bold uppercase tracking-widest border-b border-zinc-900 pb-1">
+        <button onClick={() => dispatch(fetchTasteProfile())} className="text-xs font-bold uppercase tracking-widest border-b border-forest pb-1 hover:text-forest transition-colors">
           Try Again
         </button>
       </div>
@@ -84,7 +84,7 @@ const TasteProfile = () => {
          {isComplete && (
           <button
             onClick={() => setModalOpen(true)}
-            className="flex items-center gap-2 text-[11px] font-bold uppercase tracking-widest border border-zinc-900 px-5 py-3 hover:bg-zinc-900 hover:text-white transition-colors shrink-0"
+            className="flex items-center gap-2 text-[11px] font-bold uppercase tracking-widest border border-forest px-5 py-3 hover:bg-forest hover:text-white transition-colors duration-300 shrink-0"
           >
             <Pencil size={13} />
             {profile ? 'Edit' : 'Set Up'}
@@ -100,7 +100,7 @@ const TasteProfile = () => {
             </p>
             <button
               onClick={() => setQuizModalOpen(true)}
-              className="bg-zinc-900 text-white px-8 py-4 text-[11px] font-bold uppercase tracking-widest hover:bg-zinc-800 transition-colors"
+              className="bg-forest text-white px-8 py-4 text-[11px] font-bold uppercase tracking-widest hover:bg-forest-dark transition-colors duration-300"
             >
               Build My Profile
             </button>
@@ -109,11 +109,11 @@ const TasteProfile = () => {
           <div className="space-y-6">
 
             {/* Wine Color + Experience — top summary card */}
-            <div className="bg-zinc-900 rounded-xl p-8 flex items-center justify-between text-white">
+            <div className="bg-forest rounded-xl p-8 flex items-center justify-between text-white">
               <div>
                 <div className="flex items-center gap-2 mb-3">
-                  <GraduationCap size={14} className="text-zinc-400" />
-                  <span className="text-[10px] font-bold uppercase tracking-widest text-zinc-400">
+                  <GraduationCap size={14} className="text-cream/50" />
+                  <span className="text-[10px] font-bold uppercase tracking-widest text-cream/50">
                     {profile.experience_level || 'Palate'} Drinker
                   </span>
                 </div>
@@ -126,11 +126,11 @@ const TasteProfile = () => {
                       </div>
                     ))
                   ) : (
-                    <span className="text-zinc-400 text-sm">No preference set</span>
+                    <span className="text-cream/50 text-sm">No preference set</span>
                   )}
                 </div>
               </div>
-              <Grape size={36} strokeWidth={1} className="text-zinc-600 shrink-0" />
+              <Grape size={36} strokeWidth={1} className="text-gold-light/40 shrink-0" />
             </div>
 
             {/* Palate scales */}

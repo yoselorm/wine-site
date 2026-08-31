@@ -6,6 +6,8 @@ import cartReducer from './redux/cartSlice';
 import ordersReducer from './redux/orderSlice';
 import tasteProfileReducer from './redux/tasteProfileSlice';
 import sommelierReducer from './redux/sommelierSlice';
+import walletReducer from './redux/walletSlice';
+import addressesReducer from './redux/addressSlice';
 
 const store = configureStore({
   reducer: {
@@ -16,6 +18,8 @@ const store = configureStore({
     orders: ordersReducer,
     tasteProfile: tasteProfileReducer,
     sommelier: sommelierReducer,
+    wallet: walletReducer,
+    addresses: addressesReducer,
   },
 });
 

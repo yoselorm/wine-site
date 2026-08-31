@@ -55,7 +55,7 @@ const handleMoveToCart = (product) => {
     return (
       <div className="max-w-7xl mx-auto px-6 py-24 text-center">
         <p className="text-red-500 mb-4">{error}</p>
-        <button onClick={() => dispatch(fetchWishlist())} className="text-xs font-bold uppercase tracking-widest border-b border-zinc-900 pb-1">
+        <button onClick={() => dispatch(fetchWishlist())} className="text-xs font-bold uppercase tracking-widest border-b border-forest pb-1 hover:text-forest transition-colors">
           Try Again
         </button>
       </div>
@@ -70,9 +70,9 @@ const handleMoveToCart = (product) => {
         <p className="text-zinc-500 font-light max-w-md mb-8">
           You haven't saved any wines to your wishlist yet. Explore our collection and find your next favorite vintage.
         </p>
-        <Link 
-          to="/shop" 
-          className="bg-zinc-900 text-white px-8 py-4 text-[11px] font-bold uppercase tracking-widest hover:bg-zinc-800 transition-colors"
+        <Link
+          to="/shop"
+          className="bg-forest text-white px-8 py-4 text-[11px] font-bold uppercase tracking-widest hover:bg-forest-dark transition-colors duration-300"
         >
           Discover Wines
         </Link>
@@ -127,7 +127,7 @@ const handleMoveToCart = (product) => {
               {/* Product Details */}
               <div className="flex-1 flex flex-col">
                 <Link to={`/shop/${product.slug}`}>
-                  <h3 className="font-serif text-lg text-zinc-900 hover:text-zinc-600 transition-colors mb-1 truncate">
+                  <h3 className="font-serif text-lg text-zinc-900 hover:text-forest transition-colors mb-1 truncate">
                     {product.name}
                   </h3>
                 </Link>
@@ -135,10 +135,10 @@ const handleMoveToCart = (product) => {
                 
                 {/* Action Buttons */}
                 <div className="mt-auto">
-                  <button 
+                  <button
                     onClick={() => handleMoveToCart(product)}
                     disabled={product.stock_quantity <= 0}
-                    className="w-full h-10 border border-zinc-900 text-zinc-900 flex items-center justify-center gap-2 text-[10px] font-bold uppercase tracking-widest hover:bg-zinc-900 hover:text-white transition-colors disabled:border-zinc-300 disabled:text-zinc-400 disabled:bg-transparent disabled:cursor-not-allowed"
+                    className="w-full h-10 border border-forest text-forest flex items-center justify-center gap-2 text-[10px] font-bold uppercase tracking-widest hover:bg-forest hover:text-white transition-colors duration-300 disabled:border-zinc-300 disabled:text-zinc-400 disabled:bg-transparent disabled:cursor-not-allowed"
                   >
                     <ShoppingBag size={14} /> 
                     {product.stock_quantity > 0 ? 'Move to Cart' : 'Sold Out'}

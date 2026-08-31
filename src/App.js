@@ -12,11 +12,18 @@ import Wallet from "./pages/auth/Wallet";
 import Blogs from "./pages/auth/Blogs";
 import Addresses from "./pages/auth/Addresses";
 import Sommelier from "./pages/auth/Sommelier";
+import Overview from "./pages/auth/Overview";
+import PrivacyPolicy from "./pages/public/PrivacyPolicy";
+import TermsConditions from "./pages/public/TermsConditions";
 import About from "./pages/public/About";
 import { useDispatch, useSelector } from "react-redux";
 import { useEffect } from "react";
 import { fetchTasteProfile } from "./redux/tasteProfileSlice";
 import BlogDetail from "./pages/auth/BlogDetail";
+import Login from "./pages/auth/Login";
+import Register from "./pages/auth/Register";
+import SearchResults from "./pages/public/SearchResults";
+import NotFound from "./pages/public/NotFound";
 
 
 function App() {
@@ -39,11 +46,17 @@ function App() {
      <Route path="/about" element={<About />} />
       <Route path="/blog" element={<Blogs />} />
     <Route path="/blog/:id" element={<BlogDetail />} />
+    <Route path="/login" element={<Login />} />
+    <Route path="/register" element={<Register />} />
+    <Route path="/search" element={<SearchResults />} />
+    <Route path="/privacy" element={<PrivacyPolicy />} />
+    <Route path="/terms" element={<TermsConditions />} />
+    <Route path="*" element={<NotFound />} />
   </Route>
 
   {/* Authenticated User Pages */}
   <Route element={<ProtectedRoute><UserLayout /></ProtectedRoute>}>
-  <Route path="/user/dashboard" element={<div>User Dashboard</div>} />
+  <Route path="/user/dashboard" element={<Overview />} />
    <Route path="/user/orders" element={<Orders />} />
     <Route path="/user/taste-profile" element={<TasteProfile />} /> 
     <Route path="/user/wishlist" element={<Wishlist/>} />

@@ -102,7 +102,7 @@ const Sommelier = () => {
         <div className="p-6 border-b border-zinc-200">
           <button
             onClick={handleNewSession}
-            className="w-full flex items-center justify-center gap-2 bg-zinc-900 text-white py-3 text-[11px] font-bold uppercase tracking-widest hover:bg-zinc-800 transition-colors"
+            className="w-full flex items-center justify-center gap-2 bg-forest text-white py-3 text-[11px] font-bold uppercase tracking-widest hover:bg-forest-dark transition-colors duration-300"
           >
             <Plus size={14} /> New Conversation
           </button>
@@ -125,8 +125,8 @@ const Sommelier = () => {
                 <div
                   key={item.id}
                   onClick={() => handleViewHistoryItem(item)}
-                  className={`flex items-start gap-3 px-2 py-3 rounded-lg hover:bg-zinc-50 transition-colors cursor-pointer ${
-                    viewingHistoryItem?.id === item.id ? 'bg-zinc-100' : ''
+                  className={`flex items-start gap-3 px-2 py-3 rounded-lg hover:bg-cream transition-colors cursor-pointer ${
+                    viewingHistoryItem?.id === item.id ? 'bg-cream' : ''
                   }`}
                 >
                   <MessageSquare size={14} className="text-zinc-400 mt-0.5 shrink-0" />
@@ -162,10 +162,10 @@ const Sommelier = () => {
       {/* Main chat area */}
       <main className="flex-1 flex flex-col min-w-0">
         <div className="flex items-center gap-4 px-8 py-6 border-b border-zinc-200">
-          <Link to="/shop" className="md:hidden text-zinc-400 hover:text-zinc-900">
+          <Link to="/shop" className="md:hidden text-zinc-400 hover:text-forest">
             <ArrowLeft size={18} />
           </Link>
-          <div className="w-10 h-10 rounded-full bg-zinc-900 flex items-center justify-center shrink-0">
+          <div className="w-10 h-10 rounded-full bg-forest flex items-center justify-center shrink-0">
             <Wine size={18} className="text-white" />
           </div>
           <div>
@@ -180,7 +180,7 @@ const Sommelier = () => {
             <div className="w-full max-w-md">
               <button
                 onClick={() => setViewingHistoryItem(null)}
-                className="text-[11px] font-bold uppercase tracking-widest text-zinc-400 hover:text-zinc-900 mb-6 flex items-center gap-1"
+                className="text-[11px] font-bold uppercase tracking-widest text-zinc-400 hover:text-forest mb-6 flex items-center gap-1"
               >
                 <ArrowLeft size={12} /> Back to Live Chat
               </button>
@@ -203,7 +203,7 @@ const Sommelier = () => {
                   )}
                   <Link
                     to={`/shop/${viewingHistoryItem.product?.slug}`}
-                    className="text-[10px] font-bold uppercase tracking-widest text-zinc-900 border-b border-zinc-900 hover:text-zinc-500 hover:border-zinc-500 transition-colors"
+                    className="text-[10px] font-bold uppercase tracking-widest text-forest border-b border-forest hover:text-forest-dark hover:border-forest-dark transition-colors"
                   >
                     View Product
                   </Link>
@@ -243,7 +243,7 @@ const Sommelier = () => {
                       <button
                         key={sp}
                         onClick={() => setPrompt(sp)}
-                        className="text-left px-4 py-3 border border-zinc-200 rounded-lg text-sm text-zinc-600 hover:border-zinc-900 hover:text-zinc-900 transition-colors"
+                        className="text-left px-4 py-3 border border-zinc-200 rounded-lg text-sm text-zinc-600 hover:border-forest hover:text-forest transition-colors"
                       >
                         {sp}
                       </button>
@@ -261,7 +261,7 @@ const Sommelier = () => {
                       <div
                         className={`px-5 py-3 rounded-2xl text-sm leading-relaxed ${
                           msg.role === 'user'
-                            ? 'bg-zinc-900 text-white rounded-br-sm'
+                            ? 'bg-forest text-white rounded-br-sm'
                             : 'bg-zinc-50 text-zinc-800 rounded-bl-sm font-light'
                         }`}
                       >
@@ -287,7 +287,7 @@ const Sommelier = () => {
                                 <p className="text-xs text-zinc-400 mb-2">GHS {Number(wine.price).toFixed(2)}</p>
                                 <button
                                   onClick={() => handleAddToCart(wine)}
-                                  className="text-[10px] font-bold uppercase tracking-widest text-zinc-900 border-b border-zinc-900 hover:text-zinc-500 hover:border-zinc-500 transition-colors"
+                                  className="text-[10px] font-bold uppercase tracking-widest text-forest border-b border-forest hover:text-forest-dark hover:border-forest-dark transition-colors"
                                 >
                                   Add to Cart
                                 </button>
@@ -343,12 +343,12 @@ const Sommelier = () => {
                 value={prompt}
                 onChange={(e) => setPrompt(e.target.value)}
                 placeholder="Ask about a pairing, occasion, or budget..."
-                className="flex-1 px-4 py-3 border border-zinc-200 rounded-full text-sm focus:outline-none focus:border-zinc-900 transition-colors"
+                className="flex-1 px-4 py-3 border border-zinc-200 rounded-full text-sm focus:outline-none focus:border-forest transition-colors"
               />
               <button
                 type="submit"
                 disabled={loading || !prompt.trim()}
-                className="w-11 h-11 rounded-full bg-zinc-900 text-white flex items-center justify-center hover:bg-zinc-800 transition-colors disabled:bg-zinc-300 disabled:cursor-not-allowed shrink-0"
+                className="w-11 h-11 rounded-full bg-forest text-white flex items-center justify-center hover:bg-forest-dark transition-colors duration-300 disabled:bg-zinc-300 disabled:cursor-not-allowed shrink-0"
               >
                 <Send size={16} />
               </button>
