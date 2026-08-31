@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Outlet, Link, useNavigate, useLocation } from 'react-router-dom';
-import { ShoppingBag, Search, ChevronDown, Wine, User } from 'lucide-react';
+import { createPortal } from 'react-dom';
+import { ShoppingBag, Search, ChevronDown, Wine, User, Menu, X } from 'lucide-react';
 import { useSelector } from 'react-redux';
 import TasteProfileReminderModal from '../components/auth/TasteProfileReminderModal';
 import NewsletterModal from '../components/public/NewsletterModal';
@@ -27,9 +28,13 @@ const PublicLayout = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const [isScrolled, setIsScrolled] = useState(false);
+  const [drawerVisible, setDrawerVisible] = useState(false);
+  const [drawerShown, setDrawerShown] = useState(false);
 
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
+    setDrawerShown(false);
+    setDrawerVisible(false);
   }, [location.pathname]);
 
   useEffect(() => {
@@ -50,6 +55,16 @@ const PublicLayout = () => {
     ? `${user.first_name} ${user.last_name || ''}`.trim()
     : user?.name || 'Account';
 
+  const openDrawer = () => {
+    setDrawerVisible(true);
+    requestAnimationFrame(() => setDrawerShown(true));
+  };
+
+  const closeDrawer = () => {
+    setDrawerShown(false);
+    setTimeout(() => setDrawerVisible(false), 300);
+  };
+
   return (
     <div className="min-h-screen flex flex-col bg-[#FAF7F2] text-[#2C2C2C] font-sans antialiased selection:bg-[#C5A880] selection:text-white">
       <TasteProfileReminderModal />
@@ -64,45 +79,55 @@ const PublicLayout = () => {
             : 'bg-transparent border-b border-stone-200/40'
         }`}
       >
-        <div className="max-w-7xl mx-auto px-6 sm:px-8 py-2 flex items-center justify-between gap-4">
-          {/* Social Links */}
-          <div className="flex items-center gap-3.5 text-stone-500">
-            <a
-              href="https://facebook.com"
-              target="_blank"
-              rel="noreferrer"
-              aria-label="Facebook"
-              className="hover:text-[#C5A880] transition-colors p-1"
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 md:px-8 py-2 flex items-center justify-between gap-2 sm:gap-4">
+          {/* Left: mobile menu trigger / desktop social links */}
+          <div className="flex items-center gap-3.5 text-stone-500 min-w-0">
+            <button
+              onClick={openDrawer}
+              aria-label="Open menu"
+              className="md:hidden hover:text-[#1F3D2B] transition-colors p-1 shrink-0"
             >
-              <FacebookIcon className="w-3.5 h-3.5" />
-            </a>
-            <a
-              href="https://twitter.com"
-              target="_blank"
-              rel="noreferrer"
-              aria-label="Twitter"
-              className="hover:text-[#C5A880] transition-colors p-1"
-            >
-              <TwitterIcon className="w-3.5 h-3.5" />
-            </a>
-            <a
-              href="https://instagram.com"
-              target="_blank"
-              rel="noreferrer"
-              aria-label="Instagram"
-              className="hover:text-[#C5A880] transition-colors p-1"
-            >
-              <InstagramIcon className="w-3.5 h-3.5" />
-            </a>
+              <Menu size={22} strokeWidth={1.8} />
+            </button>
+
+            <div className="hidden md:flex items-center gap-3.5">
+              <a
+                href="https://facebook.com"
+                target="_blank"
+                rel="noreferrer"
+                aria-label="Facebook"
+                className="hover:text-[#C5A880] transition-colors p-1"
+              >
+                <FacebookIcon className="w-3.5 h-3.5" />
+              </a>
+              <a
+                href="https://twitter.com"
+                target="_blank"
+                rel="noreferrer"
+                aria-label="Twitter"
+                className="hover:text-[#C5A880] transition-colors p-1"
+              >
+                <TwitterIcon className="w-3.5 h-3.5" />
+              </a>
+              <a
+                href="https://instagram.com"
+                target="_blank"
+                rel="noreferrer"
+                aria-label="Instagram"
+                className="hover:text-[#C5A880] transition-colors p-1"
+              >
+                <InstagramIcon className="w-3.5 h-3.5" />
+              </a>
+            </div>
           </div>
 
-          {/* Enlarged Logo */}
+          {/* Logo */}
           <Link to="/" className="shrink-0 transition-transform duration-200 hover:scale-[1.03]">
-            <img src={logo} alt="wine 2 u" className="h-14 sm:h-16 w-auto object-contain py-0.5" />
+            <img src={logo} alt="wine 2 u" className="h-11 sm:h-14 md:h-16 w-auto object-contain py-0.5" />
           </Link>
 
           {/* Actions: Search, Cart, Account */}
-          <div className="flex items-center gap-4 sm:gap-6 text-stone-700">
+          <div className="flex items-center gap-2.5 sm:gap-4 md:gap-6 text-stone-700 shrink-0">
             <form onSubmit={handleSearchSubmit} className="hidden md:flex items-center">
               <button
                 type="submit"
@@ -138,29 +163,39 @@ const PublicLayout = () => {
               <Link
                 to="/user/dashboard"
                 className="flex items-center gap-2 text-xs font-medium text-stone-800 hover:text-[#1F3D2B] transition-colors"
+                aria-label="Account"
               >
-                <span className="w-7 h-7 rounded-full bg-[#1F3D2B] text-white flex items-center justify-center text-[10px] font-bold">
+                <span className="w-7 h-7 rounded-full bg-[#1F3D2B] text-white flex items-center justify-center text-[10px] font-bold shrink-0">
                   {getInitials(displayName)}
                 </span>
                 <span className="hidden sm:inline font-serif">{displayName}</span>
               </Link>
             ) : (
-              <div className="flex items-center gap-1.5 text-xs text-stone-700 font-medium">
-                <User size={15} strokeWidth={1.8} className="text-stone-500" />
-                <Link to="/login" className="hover:text-[#1F3D2B] transition-colors">
-                  Login
+              <>
+                <Link
+                  to="/login"
+                  aria-label="Login"
+                  className="sm:hidden hover:text-[#1F3D2B] transition-colors p-1"
+                >
+                  <User size={18} strokeWidth={1.8} />
                 </Link>
-                <span className="text-stone-300">/</span>
-                <Link to="/register" className="hover:text-[#1F3D2B] transition-colors">
-                  Register
-                </Link>
-              </div>
+                <div className="hidden sm:flex items-center gap-1.5 text-xs text-stone-700 font-medium">
+                  <User size={15} strokeWidth={1.8} className="text-stone-500" />
+                  <Link to="/login" className="hover:text-[#1F3D2B] transition-colors">
+                    Login
+                  </Link>
+                  <span className="text-stone-300">/</span>
+                  <Link to="/register" className="hover:text-[#1F3D2B] transition-colors">
+                    Register
+                  </Link>
+                </div>
+              </>
             )}
           </div>
         </div>
 
         {/* Secondary Navigation - Compact Height */}
-        <nav className="border-t border-stone-200/50">
+        <nav className="hidden md:block border-t border-stone-200/50">
           <div className="max-w-7xl mx-auto px-6 flex items-center justify-center gap-6 sm:gap-9 text-[11px] tracking-wide text-stone-600 uppercase font-medium py-1.5 overflow-x-auto no-scrollbar">
             {NAV_LINKS.map((link) => (
               <Link
@@ -181,6 +216,68 @@ const PublicLayout = () => {
           </div>
         </nav>
       </header>
+
+      {/* Mobile Nav Drawer */}
+      {drawerVisible &&
+        createPortal(
+          <div className="fixed inset-0 z-[110] md:hidden">
+            <div
+              className={`fixed inset-0 bg-zinc-950/50 transition-opacity duration-300 ease-out ${drawerShown ? 'opacity-100' : 'opacity-0'}`}
+              onClick={closeDrawer}
+            />
+            <div
+              className={`fixed inset-y-0 left-0 w-72 max-w-[80vw] bg-white shadow-2xl p-6 overflow-y-auto transition-transform duration-300 ease-out ${
+                drawerShown ? 'translate-x-0' : '-translate-x-full'
+              }`}
+            >
+              <div className="flex items-center justify-between mb-8">
+                <img src={logo} alt="wine 2 u" className="h-11 w-auto" />
+                <button onClick={closeDrawer} aria-label="Close menu" className="text-stone-400 hover:text-[#1F3D2B] transition-colors">
+                  <X size={20} />
+                </button>
+              </div>
+
+              <nav className="space-y-1 mb-8">
+                {NAV_LINKS.map((link) => (
+                  <Link
+                    key={link.label}
+                    to={link.to}
+                    onClick={closeDrawer}
+                    className="flex items-center gap-1 px-3 py-3 rounded-lg text-sm font-medium text-stone-700 hover:bg-[#FAF7F2] hover:text-[#1F3D2B] transition-colors"
+                  >
+                    {link.label}
+                    {link.dropdown && <ChevronDown size={13} className="text-stone-400" />}
+                  </Link>
+                ))}
+              </nav>
+
+              {!isAuthenticated && (
+                <div className="flex items-center gap-2 px-3 mb-8 text-sm font-medium text-stone-700">
+                  <Link to="/login" onClick={closeDrawer} className="hover:text-[#1F3D2B] transition-colors">
+                    Login
+                  </Link>
+                  <span className="text-stone-300">/</span>
+                  <Link to="/register" onClick={closeDrawer} className="hover:text-[#1F3D2B] transition-colors">
+                    Register
+                  </Link>
+                </div>
+              )}
+
+              <div className="flex items-center gap-4 px-3 pt-6 border-t border-stone-100 text-stone-500">
+                <a href="https://facebook.com" target="_blank" rel="noreferrer" aria-label="Facebook" className="hover:text-[#C5A880] transition-colors">
+                  <FacebookIcon className="w-4 h-4" />
+                </a>
+                <a href="https://twitter.com" target="_blank" rel="noreferrer" aria-label="Twitter" className="hover:text-[#C5A880] transition-colors">
+                  <TwitterIcon className="w-4 h-4" />
+                </a>
+                <a href="https://instagram.com" target="_blank" rel="noreferrer" aria-label="Instagram" className="hover:text-[#C5A880] transition-colors">
+                  <InstagramIcon className="w-4 h-4" />
+                </a>
+              </div>
+            </div>
+          </div>,
+          document.body
+        )}
 
       {/* Main Content */}
       <main className="flex-grow">
