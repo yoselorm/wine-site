@@ -57,7 +57,7 @@ const CollectionShowcase = () => {
               Learn More
             </Link>
           </div>
-          <div className="md:w-1/2 h-72 md:h-auto overflow-hidden">
+          <div className="md:w-1/2 h-96 md:h-auto overflow-hidden">
             <img src={wineryImg} alt="The w2u winery estate" className="w-full h-full object-cover" />
           </div>
         </div>
@@ -66,7 +66,7 @@ const CollectionShowcase = () => {
           image={roseImg}
           title="Rosé"
           description="Delicate, dry and endlessly food-friendly — our pick of rosé for warm-weather sipping."
-          className="h-80 md:h-96"
+          className="h-96 md:h-[32rem]"
         />
 
         <div className="flex flex-col md:flex-row gap-4">
@@ -75,20 +75,20 @@ const CollectionShowcase = () => {
             title="Champagne"
             description="Celebration in a glass. Grower champagnes and classic houses, cellared and ready to pour."
             to="/shop?category=champagne"
-            className="h-72 md:h-auto md:w-1/2"
+            className="h-96 md:h-auto md:w-1/2"
           />
           <div className="md:w-1/2 flex flex-col gap-4">
             <StyleTile
               image={proseccoImg}
               title="Prosecco"
               description="Light, bright and effortlessly sociable — perfect for aperitivo hour."
-              className="h-56 flex-1"
+              className="h-72 flex-1"
             />
             <StyleTile
               image={redWineImg}
               title="Red Wine"
               description="Bold tannins and rich fruit from vineyards across the globe."
-              className="h-56 flex-1"
+              className="h-72 flex-1"
             />
           </div>
         </div>
@@ -97,7 +97,7 @@ const CollectionShowcase = () => {
           image={whiteWineImg}
           title="White Wine"
           description="Crisp, aromatic whites sourced from cool-climate vineyards around the world."
-          className="h-80 md:h-96"
+          className="h-96 md:h-[32rem]"
         />
       </div>
     </section>

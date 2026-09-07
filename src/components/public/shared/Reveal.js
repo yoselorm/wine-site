@@ -26,10 +26,14 @@ const Reveal = ({ children, className = '', delay = 0 }) => {
   return (
     <div
       ref={ref}
-      style={{ transitionDelay: visible ? `${delay}ms` : '0ms' }}
-      className={`transition-all duration-700 ease-out ${
-        visible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'
-      } ${className}`}
+      style={{
+        transitionDelay: visible ? `${delay}ms` : '0ms',
+        // Settle on a literal `none` (rather than Tailwind's translate-y-0, which is
+        // always a non-none matrix) so revealed sections don't become an accidental
+        // containing block — that breaks `background-attachment: fixed` in children.
+        transform: visible ? 'none' : 'translateY(2.5rem)',
+      }}
+      className={`transition-all duration-700 ease-out ${visible ? 'opacity-100' : 'opacity-0'} ${className}`}
     >
       {children}
     </div>

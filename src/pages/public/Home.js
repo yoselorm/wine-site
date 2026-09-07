@@ -8,7 +8,7 @@ import besteller01 from '../../assets/images/bestseller01.jpg';
 import besteller02 from '../../assets/images/bestseller02.jpg';
 import besteller03 from '../../assets/images/bestseller03.jpg';
 import besteller04 from '../../assets/images/bestseller04.jpg';
-import wineryBanner from '../../assets/images/grid-champagne.jpg';
+import exclusiveRangeBg from '../../assets/images/exclusiverangebg.jpg';
 import jarnoBanner from '../../assets/images/cellar.jpg';
 import jarnoBottle from '../../assets/images/home/home-hero02.png';
 
@@ -62,26 +62,28 @@ const Home = () => {
         <ProductRow title="Our Bestsellers" items={bestsellers} />
       </Reveal>
 
-      <Reveal>
-        <section className="relative h-[50vh] min-h-[360px] w-full overflow-hidden flex items-center">
-          <img src={wineryBanner} alt="Exclusive range of winery" className="absolute inset-0 w-full h-full object-cover" />
-          <div className="absolute inset-0 bg-forest-dark/60" />
-          <div className="relative z-10 max-w-7xl mx-auto px-6 w-full">
-            <div className="max-w-md">
-              <h2 className="font-serif text-3xl md:text-4xl text-white mb-4">Exclusive range of winery</h2>
-              <p className="text-cream/80 font-light leading-relaxed mb-8">
-                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut elit tellus, luctus nec ullamcorper mattis, pulvinar dapibus leo.
-              </p>
-              <Link
-                to="/shop"
-                className="inline-block bg-gold text-forest-dark px-8 py-3 text-[11px] font-bold uppercase tracking-widest hover:bg-gold-light transition-colors duration-300"
-              >
-                Shop Now
-              </Link>
-            </div>
+      <section className="relative h-[85vh] min-h-[620px] w-full overflow-hidden flex items-center">
+        <div
+          className="absolute inset-0 bg-cover bg-center bg-fixed"
+          style={{ backgroundImage: `url(${exclusiveRangeBg})` }}
+          aria-hidden="true"
+        />
+        <div className="absolute inset-0 bg-forest-dark/60" />
+        <div className="relative z-10 max-w-7xl mx-auto px-6 w-full">
+          <div className="max-w-md">
+            <h2 className="font-serif text-3xl md:text-4xl text-white mb-4">Exclusive range of winery</h2>
+            <p className="text-cream/80 font-light leading-relaxed mb-8">
+              Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut elit tellus, luctus nec ullamcorper mattis, pulvinar dapibus leo.
+            </p>
+            <Link
+              to="/shop"
+              className="inline-block bg-gold text-forest-dark px-8 py-3 text-[11px] font-bold uppercase tracking-widest hover:bg-gold-light transition-colors duration-300"
+            >
+              Shop Now
+            </Link>
           </div>
-        </section>
-      </Reveal>
+        </div>
+      </section>
 
       <Reveal>
         <ProductRow eyebrow="Regions" title="Italy's Finest" items={italyFinest} />

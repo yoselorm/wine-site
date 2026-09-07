@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { ChevronLeft, ChevronRight, Plus } from 'lucide-react';
-import heroImg from '../../../assets/images/home/hero-right.png';
+import heroBottleRed from '../../../assets/images/home/homehero01.png';
+import heroBottleWhite from '../../../assets/images/home/homehero02.png';
 import thumb1 from '../../../assets/images/bestseller02.jpg';
 import thumb2 from '../../../assets/images/bestseller03.jpg';
 import thumb3 from '../../../assets/images/bestseller04.jpg';
@@ -116,11 +117,16 @@ const Hero = () => {
         </div>
 
         {/* Right Column: Hero Stage Graphic */}
-        <div className="lg:col-span-6 relative flex items-center justify-center">
+        <div className="lg:col-span-6 relative flex items-end justify-center gap-3 sm:gap-6">
           <img
-            src={heroImg}
-            alt="Exclusive wrapped bottle and fresh vineyard grapes"
-            className="w-full max-w-[540px] lg:max-w-[620px] h-auto object-contain drop-shadow-xl"
+            src={heroBottleRed}
+            alt="Angels Tears Le Chocolat Pinotage"
+            className="w-[40%] max-w-[220px] sm:max-w-[260px] h-auto object-contain drop-shadow-xl"
+          />
+          <img
+            src={heroBottleWhite}
+            alt="Dos Almas Reserva Sauvignon Blanc"
+            className="w-[44%] max-w-[240px] sm:max-w-[280px] h-auto object-contain drop-shadow-2xl translate-y-3 sm:translate-y-6"
           />
         </div>
       </div>
