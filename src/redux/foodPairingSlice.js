@@ -58,9 +58,8 @@ const foodPairingSlice = createSlice({
       .addCase(fetchFoodDishes.fulfilled, (state, action) => {
         state.dishesLoading = false;
         const payload = action.payload?.data;
-        const list = Array.isArray(payload) ? payload : payload?.data || [];
-        const page = Number(action.meta.arg?.page) || 1;
-        state.dishes = page > 1 ? [...state.dishes, ...list] : list;
+        // Real numbered pagination — each page replaces the list, it doesn't append to it.
+        state.dishes = Array.isArray(payload) ? payload : payload?.data || [];
         state.dishesMeta = Array.isArray(payload) ? null : payload?.meta || null;
       })
       .addCase(fetchFoodDishes.rejected, (state, action) => {

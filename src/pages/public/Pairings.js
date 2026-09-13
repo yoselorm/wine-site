@@ -4,6 +4,9 @@ import { useDispatch, useSelector } from 'react-redux';
 import { Search } from 'lucide-react';
 import { fetchFoodDishes } from '../../redux/foodPairingSlice';
 import SectionBanner from '../../components/public/shared/SectionBanner';
+import Pagination from '../../components/public/shared/Pagination';
+
+const PER_PAGE = 12;
 
 const FILTERS = [
   { label: 'All', value: '' },
@@ -19,18 +22,30 @@ const Pairings = () => {
   const [page, setPage] = useState(1);
 
   useEffect(() => {
-    setPage(1);
-    dispatch(fetchFoodDishes({ page: 1, ...(isLocal !== '' ? { is_local: isLocal } : {}), ...(search ? { search } : {}) }));
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isLocal, search, dispatch]);
+    dispatch(
+      fetchFoodDishes({
+        page,
+        per_page: PER_PAGE,
+        ...(isLocal !== '' ? { is_local: isLocal } : {}),
+        ...(search ? { search } : {}),
+      })
+    );
+  }, [isLocal, search, page, dispatch]);
 
-  const handleLoadMore = () => {
-    const nextPage = page + 1;
-    setPage(nextPage);
-    dispatch(fetchFoodDishes({ page: nextPage, ...(isLocal !== '' ? { is_local: isLocal } : {}), ...(search ? { search } : {}) }));
+  const handleFilterChange = (value) => {
+    setIsLocal(value);
+    setPage(1);
   };
 
-  const canLoadMore = dishesMeta && dishesMeta.current_page < dishesMeta.last_page;
+  const handleSearchChange = (value) => {
+    setSearch(value);
+    setPage(1);
+  };
+
+  const handlePageChange = (nextPage) => {
+    setPage(nextPage);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
 
   return (
     <div className="bg-cream min-h-screen">
@@ -41,12 +56,12 @@ const Pairings = () => {
           Find the right bottle for what's on the table — from Ghanaian classics to dishes from around the world.
         </p>
 
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-6 mb-12">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-6 mb-6">
           <div className="flex items-center gap-2">
             {FILTERS.map((f) => (
               <button
                 key={f.label}
-                onClick={() => setIsLocal(f.value)}
+                onClick={() => handleFilterChange(f.value)}
                 className={`px-5 py-2.5 text-[11px] font-bold uppercase tracking-widest border transition-colors ${
                   isLocal === f.value ? 'bg-forest text-white border-forest' : 'border-zinc-300 text-zinc-600 hover:border-forest hover:text-forest'
                 }`}
@@ -61,12 +76,18 @@ const Pairings = () => {
             <input
               type="search"
               value={search}
-              onChange={(e) => setSearch(e.target.value)}
+              onChange={(e) => handleSearchChange(e.target.value)}
               placeholder="Search dishes..."
               className="w-full border border-zinc-300 pl-9 pr-4 py-2.5 text-sm focus:outline-none focus:border-forest transition-colors"
             />
           </div>
         </div>
+
+        {dishesMeta && dishesMeta.total > 0 && (
+          <p className="text-xs text-zinc-400 uppercase tracking-widest mb-8">
+            Showing {dishesMeta.from}–{dishesMeta.to} of {dishesMeta.total} dishes
+          </p>
+        )}
 
         {dishesLoading && dishes.length === 0 ? (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 animate-pulse">
@@ -86,7 +107,11 @@ const Pairings = () => {
             <p className="text-sm text-zinc-400">Try a different search or filter.</p>
           </div>
         ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+          <div
+            className={`grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 transition-opacity duration-300 ${
+              dishesLoading ? 'opacity-40 pointer-events-none' : 'opacity-100'
+            }`}
+          >
             {dishes.map((dish) => (
               <Link key={dish.id} to={`/pairings/${dish.id}`} className="group block">
                 <div className="aspect-[4/3] bg-white overflow-hidden mb-4 relative">
@@ -119,17 +144,12 @@ const Pairings = () => {
           </div>
         )}
 
-        {canLoadMore && (
-          <div className="flex justify-center mt-16">
-            <button
-              onClick={handleLoadMore}
-              disabled={dishesLoading}
-              className="border border-forest text-forest px-10 py-3 text-[11px] font-bold uppercase tracking-widest hover:bg-forest hover:text-white transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              {dishesLoading ? 'Loading...' : 'View More'}
-            </button>
-          </div>
-        )}
+        <Pagination
+          currentPage={dishesMeta?.current_page || page}
+          lastPage={dishesMeta?.last_page}
+          onPageChange={handlePageChange}
+          className="mt-16"
+        />
       </div>
     </div>
   );
