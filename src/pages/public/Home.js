@@ -73,7 +73,7 @@ const Home = () => {
   return (
     <div className="bg-cream animate-fade-in">
       <Hero />
-
+ 
       <Reveal>
         <ProductRow title="Our Bestsellers" items={bestsellers} />
       </Reveal>

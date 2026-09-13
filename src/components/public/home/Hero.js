@@ -121,12 +121,12 @@ const Hero = () => {
           <img
             src={heroBottleRed}
             alt="Angels Tears Le Chocolat Pinotage"
-            className="w-[40%] max-w-[220px] sm:max-w-[260px] h-auto object-contain drop-shadow-xl"
+            className="h-80 sm:h-[30rem] lg:h-[36rem] w-auto object-contain drop-shadow-xl"
           />
           <img
             src={heroBottleWhite}
             alt="Dos Almas Reserva Sauvignon Blanc"
-            className="w-[44%] max-w-[240px] sm:max-w-[280px] h-auto object-contain drop-shadow-2xl translate-y-3 sm:translate-y-6"
+            className="h-80 sm:h-[30rem] lg:h-[36rem] w-auto object-contain drop-shadow-2xl"
           />
         </div>
       </div>
