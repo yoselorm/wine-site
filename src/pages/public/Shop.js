@@ -57,6 +57,7 @@ const Shop = () => {
     category_id: searchParams.get('category_id') || '',
     region_id: searchParams.get('region_id') || '',
     search: searchParams.get('search') || '',
+    sort_by: searchParams.get('sort_by') || '',
     sort_order: searchParams.get('sort_order') || 'desc',
   });
 
@@ -84,6 +85,11 @@ const Shop = () => {
 
   const handleLoadMore = () => {
     setFilters((prev) => ({ ...prev, page: Number(prev.page) + 1 }));
+  };
+
+  const handleSortChange = (e) => {
+    const [sort_by, sort_order] = e.target.value ? e.target.value.split('_') : ['', 'desc'];
+    setFilters((prev) => ({ ...prev, page: 1, sort_by, sort_order }));
   };
 
   return (
@@ -121,7 +127,19 @@ const Shop = () => {
           </aside>
 
           <main className="flex-1">
-            {loading ? (
+            <div className="flex justify-end mb-8">
+              <select
+                value={filters.sort_by ? `${filters.sort_by}_${filters.sort_order}` : ''}
+                onChange={handleSortChange}
+                className="border border-zinc-300 px-4 py-2 text-xs uppercase tracking-widest text-zinc-600 focus:outline-none focus:border-forest transition-colors bg-white"
+              >
+                <option value="">Sort: Newest</option>
+                <option value="price_asc">Price: Low to High</option>
+                <option value="price_desc">Price: High to Low</option>
+              </select>
+            </div>
+
+            {loading && products.length === 0 ? (
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-14 animate-pulse">
                 {[...Array(6)].map((_, i) => (
                   <div key={i}>
@@ -137,10 +155,12 @@ const Shop = () => {
                 <p className="text-sm text-zinc-400">Try adjusting your filters to see more results.</p>
               </div>
             ) : (
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-14">
-                {visibleProducts.map((p) => (
-                  <ProductCard key={p.id} product={p} />
-                ))}
+              <div className="max-h-[1400px] overflow-y-auto pr-2">
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-14">
+                  {visibleProducts.map((p) => (
+                    <ProductCard key={p.id} product={p} />
+                  ))}
+                </div>
               </div>
             )}
 
@@ -148,9 +168,10 @@ const Shop = () => {
               <div className="flex justify-center mt-16">
                 <button
                   onClick={handleLoadMore}
-                  className="border border-forest text-forest px-10 py-3 text-[11px] font-bold uppercase tracking-widest hover:bg-forest hover:text-white transition-colors"
+                  disabled={loading}
+                  className="border border-forest text-forest px-10 py-3 text-[11px] font-bold uppercase tracking-widest hover:bg-forest hover:text-white transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                 >
-                  View More
+                  {loading ? 'Loading...' : 'View More'}
                 </button>
               </div>
             )}

@@ -24,6 +24,12 @@ import Login from "./pages/auth/Login";
 import Register from "./pages/auth/Register";
 import SearchResults from "./pages/public/SearchResults";
 import NotFound from "./pages/public/NotFound";
+import Pairings from "./pages/public/Pairings";
+import PairingDetail from "./pages/public/PairingDetail";
+import Cart from "./pages/public/Cart";
+import Checkout from "./pages/public/Checkout";
+import OrderConfirmation from "./pages/public/OrderConfirmation";
+import TrackOrder from "./pages/public/TrackOrder";
 
 
 function App() {
@@ -49,6 +55,12 @@ function App() {
     <Route path="/login" element={<Login />} />
     <Route path="/register" element={<Register />} />
     <Route path="/search" element={<SearchResults />} />
+    <Route path="/pairings" element={<Pairings />} />
+    <Route path="/pairings/:dishId" element={<PairingDetail />} />
+    <Route path="/cart" element={<Cart />} />
+    <Route path="/checkout" element={<Checkout />} />
+    <Route path="/order-confirmation" element={<OrderConfirmation />} />
+    <Route path="/track-order" element={<TrackOrder />} />
     <Route path="/privacy" element={<PrivacyPolicy />} />
     <Route path="/terms" element={<TermsConditions />} />
     <Route path="*" element={<NotFound />} />

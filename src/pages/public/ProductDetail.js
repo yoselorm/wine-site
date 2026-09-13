@@ -193,7 +193,7 @@ const ProductDetail = () => {
 
             <div className="mb-10">
               <h3 className="text-[11px] font-bold uppercase tracking-widest text-zinc-900 mb-3">Description</h3>
-              <p className="text-zinc-600 leading-relaxed font-light mb-4">{product.short_description || product.description}</p>
+              <p className="text-zinc-600 leading-relaxed font-light mb-4">{product.description || product.short_description}</p>
               <div className="flex flex-wrap gap-2">
                 {[product.categories?.[0]?.name, product.regions?.[0]?.name, 'Aroma'].filter(Boolean).map((tag) => (
                   <span key={tag} className="text-[10px] uppercase tracking-widest px-3 py-1 bg-white border border-zinc-200 text-zinc-500">

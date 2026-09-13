@@ -16,7 +16,7 @@ const NAV_LINKS = [
   { label: 'Wines', to: '/shop' },
   { label: 'Champagnes', to: '/shop?category=champagne' },
   { label: 'Cognacs', to: '/shop?category=cognac' },
-  { label: 'Pairings', to: '/shop', dropdown: true },
+  { label: 'Pairings', to: '/pairings' },
   { label: 'Grapes', to: '/shop' },
   { label: 'Regions', to: '/shop' },
   { label: 'Our Blog', to: '/blog' },
@@ -397,8 +397,11 @@ const PublicLayout = () => {
               <Link to="/about" className="text-[13px] text-stone-300/90 hover:text-white transition-colors w-fit font-light">
                 About Us
               </Link>
-              <Link to="/shop" className="text-[13px] text-stone-300/90 hover:text-white transition-colors w-fit font-light">
+              <Link to="/pairings" className="text-[13px] text-stone-300/90 hover:text-white transition-colors w-fit font-light">
                 Food Pairings
+              </Link>
+              <Link to="/track-order" className="text-[13px] text-stone-300/90 hover:text-white transition-colors w-fit font-light">
+                Track Order
               </Link>
               <Link to="/blog" className="text-[13px] text-stone-300/90 hover:text-white transition-colors w-fit font-light">
                 Koko's Blog

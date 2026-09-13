@@ -8,6 +8,10 @@ import tasteProfileReducer from './redux/tasteProfileSlice';
 import sommelierReducer from './redux/sommelierSlice';
 import walletReducer from './redux/walletSlice';
 import addressesReducer from './redux/addressSlice';
+import foodPairingReducer from './redux/foodPairingSlice';
+import suburbsReducer from './redux/suburbSlice';
+import pickupLocationsReducer from './redux/pickupLocationSlice';
+import guestOrderReducer from './redux/guestOrderSlice';
 
 const store = configureStore({
   reducer: {
@@ -20,6 +24,10 @@ const store = configureStore({
     sommelier: sommelierReducer,
     wallet: walletReducer,
     addresses: addressesReducer,
+    foodPairing: foodPairingReducer,
+    suburbs: suburbsReducer,
+    pickupLocations: pickupLocationsReducer,
+    guestOrder: guestOrderReducer,
   },
 });
 

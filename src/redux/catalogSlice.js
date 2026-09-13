@@ -165,7 +165,10 @@ const catalogSlice = createSlice({
       .addCase(fetchProducts.pending, (state) => { state.loading = true; state.error = null; })
       .addCase(fetchProducts.fulfilled, (state, action) => {
         state.loading = false;
-        state.products = action.payload?.data || action.payload;
+        const newProducts = action.payload?.data || action.payload || [];
+        // Page 2+ (Shop's "View More") appends to the existing list instead of replacing it
+        const page = Number(action.meta.arg?.page) || 1;
+        state.products = page > 1 ? [...state.products, ...newProducts] : newProducts;
       })
       .addCase(fetchProducts.rejected, (state, action) => { state.loading = false; state.error = action.payload; })
 

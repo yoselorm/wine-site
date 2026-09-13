@@ -32,10 +32,15 @@ export const fetchOrderById = createAsyncThunk(
 // POST /api/v1/orders — Create a new order (Checkout)
 export const createOrder = createAsyncThunk(
   'orders/createOrder',
-  async ({ customer_address_id, payment_token, notes, coupon_code, items }, { rejectWithValue }) => {
+  async (
+    { customer_address_id, fulfilment_method, pickup_location_id, payment_token, notes, coupon_code, items },
+    { rejectWithValue }
+  ) => {
     try {
       const response = await api.post(`${api_url}/v1/orders`, {
         customer_address_id,
+        fulfilment_method, // 'delivery' (default) or 'pickup'
+        pickup_location_id, // required when fulfilment_method is 'pickup'
         payment_token,
         notes,
         coupon_code,
