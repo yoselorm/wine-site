@@ -1,9 +1,11 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import { ChevronLeft, ChevronRight } from 'lucide-react';
 import Hero from '../../components/public/home/Hero';
 import CollectionShowcase from '../../components/public/home/CollectionShowcase';
 import TeaserCard from '../../components/public/shared/TeaserCard';
 import Reveal from '../../components/public/shared/Reveal';
+import TopoBand from '../../components/public/shared/TopoBand';
 import besteller01 from '../../assets/images/bestseller01.jpg';
 import besteller02 from '../../assets/images/bestseller02.jpg';
 import besteller03 from '../../assets/images/bestseller03.jpg';
@@ -53,6 +55,20 @@ const ProductRow = ({ eyebrow, title, items }) => (
   </section>
 );
 
+const CarouselHeader = ({ title }) => (
+  <div className="flex items-center justify-between max-w-7xl mx-auto px-6 py-12">
+    <h2 className="font-serif text-3xl text-zinc-900">{title}</h2>
+    <div className="flex items-center gap-2 text-stone-500">
+      <button type="button" aria-label="Previous" className="hover:text-forest transition-colors p-1">
+        <ChevronLeft size={18} />
+      </button>
+      <button type="button" aria-label="Next" className="hover:text-forest transition-colors p-1">
+        <ChevronRight size={18} />
+      </button>
+    </div>
+  </div>
+);
+
 const Home = () => {
   return (
     <div className="bg-cream animate-fade-in">
@@ -84,6 +100,18 @@ const Home = () => {
           </div>
         </div>
       </section>
+
+      <Reveal>
+        <CarouselHeader title="Top Rated Products" />
+      </Reveal>
+
+      <Reveal>
+        <TopoBand className="h-32 md:h-40" />
+      </Reveal>
+
+      <Reveal>
+        <CarouselHeader title="Champagne" />
+      </Reveal>
 
       <Reveal>
         <ProductRow eyebrow="Regions" title="Italy's Finest" items={italyFinest} />
