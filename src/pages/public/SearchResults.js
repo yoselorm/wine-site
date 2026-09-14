@@ -34,7 +34,7 @@ const SearchResults = () => {
   const [searchParams] = useSearchParams();
   const query = searchParams.get('q') || '';
 
-  const { products, loading } = useSelector((state) => state.catalog);
+  const { products, productsLoading: loading } = useSelector((state) => state.catalog);
   const [wineType, setWineType] = useState('');
   const [grapeVariety, setGrapeVariety] = useState('');
   const [foodPairing, setFoodPairing] = useState('');

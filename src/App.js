@@ -4,6 +4,7 @@ import UserLayout from "./layouts/UserLayout";
 import PublicLayout from "./layouts/PublicLayout";
 import Home from "./pages/public/Home";
 import Shop from "./pages/public/Shop";
+import Grapes from "./pages/public/Grapes";
 import ProductDetail from "./pages/public/ProductDetail";
 import Wishlist from "./pages/auth/wishlist";
 import TasteProfile from "./pages/auth/TasteProfile";
@@ -48,6 +49,7 @@ function App() {
   <Route element={<PublicLayout />}>
    <Route path="/" element={<Home />} />
      <Route path="/shop" element={<Shop />} />
+     <Route path="/grapes" element={<Grapes />} />
      <Route path="/shop/:slug" element={<ProductDetail />} />
      <Route path="/about" element={<About />} />
       <Route path="/blog" element={<Blogs />} />

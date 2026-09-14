@@ -25,7 +25,7 @@ import {
 const ProductDetail = () => {
   const { slug } = useParams();
   const dispatch = useDispatch();
-  const { selectedProduct: product, products, loading, error } = useSelector((state) => state.catalog);
+  const { selectedProduct: product, products, productsLoading: loading, error } = useSelector((state) => state.catalog);
   const wishlistItems = useSelector((state) => state.wishlist?.items || []);
 
   const [quantity, setQuantity] = useState(1);

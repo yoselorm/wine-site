@@ -14,10 +14,13 @@ import footerBg from '../assets/images/footer.jpg';
 
 const NAV_LINKS = [
   { label: 'Wines', to: '/shop' },
-  { label: 'Champagnes', to: '/shop?category=champagne' },
-  { label: 'Cognacs', to: '/shop?category=cognac' },
+  // `state` (not a URL search param) survives Shop's own URL rewriting, and
+  // `location.key` changing on every navigation means Shop re-resolves this even
+  // when it's already mounted on /shop — e.g. clicking between these two links.
+  { label: 'Champagnes', to: '/shop', state: { categorySlug: 'champagne' } },
+  { label: 'Cognacs', to: '/shop', state: { categorySlug: 'cognac' } },
   { label: 'Pairings', to: '/pairings' },
-  { label: 'Grapes', to: '/shop' },
+  { label: 'Grapes', to: '/grapes' },
   { label: 'Regions', to: '/shop' },
   { label: 'Our Blog', to: '/blog' },
 ];
@@ -201,6 +204,7 @@ const PublicLayout = () => {
               <Link
                 key={link.label}
                 to={link.to}
+                state={link.state}
                 className="hover:text-[#1F3D2B] transition-colors flex items-center gap-1 shrink-0 group relative py-0.5"
               >
                 <span>{link.label}</span>
@@ -242,6 +246,7 @@ const PublicLayout = () => {
                   <Link
                     key={link.label}
                     to={link.to}
+                    state={link.state}
                     onClick={closeDrawer}
                     className="flex items-center gap-1 px-3 py-3 rounded-lg text-sm font-medium text-stone-700 hover:bg-[#FAF7F2] hover:text-[#1F3D2B] transition-colors"
                   >
@@ -381,10 +386,10 @@ const PublicLayout = () => {
               <Link to="/shop" className="text-[13px] text-stone-300/90 hover:text-white transition-colors w-fit font-light">
                 Wines
               </Link>
-              <Link to="/shop?category=champagne" className="text-[13px] text-stone-300/90 hover:text-white transition-colors w-fit font-light">
+              <Link to="/shop" state={{ categorySlug: 'champagne' }} className="text-[13px] text-stone-300/90 hover:text-white transition-colors w-fit font-light">
                 Champagnes
               </Link>
-              <Link to="/shop?category=cognac" className="text-[13px] text-stone-300/90 hover:text-white transition-colors w-fit font-light">
+              <Link to="/shop" state={{ categorySlug: 'cognac' }} className="text-[13px] text-stone-300/90 hover:text-white transition-colors w-fit font-light">
                 Cognacs
               </Link>
             </div>

@@ -147,6 +147,13 @@ const catalogSlice = createSlice({
     // Global UI states
     loading: false,
     error: null,
+
+    // Products get their own loading flag — Shop/ProductDetail fire fetchProducts
+    // alongside fetchCategories/fetchRegions, and those share the flag above.
+    // Whichever resolves first would otherwise flip `loading` back to false while
+    // the others are still in flight, flashing an empty state before products arrive.
+    productsLoading: false,
+    productsMeta: null,
   },
   reducers: {
     clearCatalogStatus: (state) => {
@@ -162,22 +169,27 @@ const catalogSlice = createSlice({
   extraReducers: (builder) => {
     builder
       // Products Lifecycles
-      .addCase(fetchProducts.pending, (state) => { state.loading = true; state.error = null; })
+      .addCase(fetchProducts.pending, (state) => { state.productsLoading = true; state.error = null; })
       .addCase(fetchProducts.fulfilled, (state, action) => {
-        state.loading = false;
-        const newProducts = action.payload?.data || action.payload || [];
+        state.productsLoading = false;
+        // GET /products is now wrapped in the standard envelope like every other list
+        // endpoint — the array moved one level deeper (data.data.data, not data.data).
+        // Accept either shape defensively rather than hard-coding which is live.
+        const payload = action.payload?.data;
+        const newProducts = Array.isArray(payload) ? payload : payload?.data || [];
+        state.productsMeta = Array.isArray(payload) ? null : payload?.meta || null;
         // Page 2+ (Shop's "View More") appends to the existing list instead of replacing it
         const page = Number(action.meta.arg?.page) || 1;
         state.products = page > 1 ? [...state.products, ...newProducts] : newProducts;
       })
-      .addCase(fetchProducts.rejected, (state, action) => { state.loading = false; state.error = action.payload; })
+      .addCase(fetchProducts.rejected, (state, action) => { state.productsLoading = false; state.error = action.payload; })
 
-      .addCase(fetchProductBySlug.pending, (state) => { state.loading = true; state.error = null; })
+      .addCase(fetchProductBySlug.pending, (state) => { state.productsLoading = true; state.error = null; })
       .addCase(fetchProductBySlug.fulfilled, (state, action) => {
-        state.loading = false;
+        state.productsLoading = false;
         state.selectedProduct = action.payload?.data || action.payload;
       })
-      .addCase(fetchProductBySlug.rejected, (state, action) => { state.loading = false; state.error = action.payload; })
+      .addCase(fetchProductBySlug.rejected, (state, action) => { state.productsLoading = false; state.error = action.payload; })
       
       // Product Categories Lifecycles
       .addCase(fetchCategories.pending, (state) => { state.loading = true; state.error = null; })
