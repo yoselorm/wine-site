@@ -17,9 +17,12 @@ export const sendSommelierMessage = createAsyncThunk(
 
 export const fetchSommelierHistory = createAsyncThunk(
   'sommelier/fetchHistory',
-  async (_, { rejectWithValue }) => {
+  // This endpoint takes `limit`, not `per_page` (it's the one outlier that returns a raw
+  // Laravel paginator instead of the normal envelope) — without it the sidebar silently
+  // gets whatever the backend's own default is.
+  async ({ limit = 50 } = {}, { rejectWithValue }) => {
     try {
-      const response = await api.get(`${api_url}/v1/sommelier/history`);
+      const response = await api.get(`${api_url}/v1/sommelier/history`, { params: { limit } });
       return response.data;
     } catch (err) {
       return rejectWithValue(err.response?.data?.message || 'Failed to fetch recommendation history');

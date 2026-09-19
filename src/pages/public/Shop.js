@@ -20,6 +20,9 @@ const Shop = () => {
 
   const [filters, setFilters] = useState({
     page: searchParams.get('page') || 1,
+    // Undocumented-but-confirmed: /products defaults to per_page=15 with no error
+    // and no hint there's more — always send it explicitly.
+    per_page: 24,
     category_id: searchParams.get('category_id') || '',
     dish_id: searchParams.get('dish_id') || '',
     region_id: searchParams.get('region_id') || '',
@@ -158,6 +161,7 @@ const Shop = () => {
     setSmoothTannic(50);
     setFilters({
       page: 1,
+      per_page: 24,
       category_id: '',
       dish_id: '',
       region_id: '',

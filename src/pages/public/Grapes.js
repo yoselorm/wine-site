@@ -26,6 +26,9 @@ const Grapes = () => {
 
   const [filters, setFilters] = useState({
     page: searchParams.get('page') || 1,
+    // Undocumented-but-confirmed: /products defaults to per_page=15 with no error
+    // and no hint there's more — always send it explicitly.
+    per_page: 24,
     category_id: searchParams.get('category_id') || '',
     dish_id: searchParams.get('dish_id') || '',
     search: '',
@@ -129,6 +132,7 @@ const Grapes = () => {
     setSmoothTannic(50);
     setFilters((prev) => ({
       page: 1,
+      per_page: 24,
       category_id: allGrapeIds,
       dish_id: '',
       search: '',

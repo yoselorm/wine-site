@@ -51,7 +51,9 @@ const SearchResults = () => {
   }, [dispatch]);
 
   useEffect(() => {
-    dispatch(fetchProducts({ search: query, min_price: 0 }));
+    // /products defaults to per_page=15 with no error and no hint there's more —
+    // always send it explicitly.
+    dispatch(fetchProducts({ search: query, min_price: 0, per_page: 24 }));
   }, [query, dispatch]);
 
   const handleSearchSubmit = (e) => {
