@@ -12,12 +12,6 @@ export const WINE_TYPES = ['Red', 'White', 'Sparkling', 'Dessert', 'Port'];
 export const GRAPE_VARIETIES = ['Cabernet Sauvignon', 'Merlot', 'Cabernet Franc'];
 export const FOOD_PAIRINGS = ['Beef', 'Game', 'Poultry'];
 
-const RATINGS = [4.8, 4.5, 4.2, 4.6, 4.0, 4.7, 4.3];
-export const getPlaceholderRating = (id) => RATINGS[hashToIndex(id, RATINGS.length)];
-
-const REVIEW_COUNTS = [128, 64, 302, 47, 210, 89, 156];
-export const getPlaceholderReviewCount = (id) => REVIEW_COUNTS[hashToIndex(id, REVIEW_COUNTS.length)];
-
 const CHARACTERISTIC_SETS = [
   { light_bold: 70, smooth_tannic: 55, dry_sweet: 30, soft_acidic: 60 },
   { light_bold: 40, smooth_tannic: 30, dry_sweet: 65, soft_acidic: 45 },
@@ -47,35 +41,6 @@ const AWARD_SETS = [
   [],
 ];
 export const getPlaceholderAwards = (id) => AWARD_SETS[hashToIndex(id, AWARD_SETS.length)];
-
-export const getPlaceholderReviews = (id) => {
-  const seedIndex = hashToIndex(id, 3);
-  const names = [['John Doe', 'Sarah Lee'], ['Michael Owusu', 'Ama Boateng'], ['Kwame Mensah', 'Linda Osei']];
-  const [nameA, nameB] = names[seedIndex];
-  return [
-    {
-      name: nameA,
-      rating: 5,
-      date: 'August 1, 2020',
-      text: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut aliquam purus sit amet luctus venenatis, lectus magna fringilla urna.',
-    },
-    {
-      name: nameB,
-      rating: 4,
-      date: 'August 16, 2020',
-      text: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut aliquam purus sit amet luctus venenatis, lectus magna fringilla urna.',
-    },
-  ];
-};
-
-export const getRatingBreakdown = (id) => {
-  const sets = [
-    [62, 22, 9, 4, 3],
-    [48, 30, 12, 6, 4],
-    [70, 18, 7, 3, 2],
-  ];
-  return sets[hashToIndex(id, sets.length)];
-};
 
 const AVATAR_COLORS = ['#8C2F39', '#C08A34', '#2F3A2C', '#6B7A5E', '#A65B4B'];
 export const getAvatarColor = (seed) => AVATAR_COLORS[hashToIndex(seed, AVATAR_COLORS.length)];

@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, Link } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
-import { ShoppingBag, Heart, ChevronRight, Minus, Plus, ChevronLeft, Award } from 'lucide-react';
-import { fetchProductBySlug, fetchProducts, clearSelectedItems } from '../../redux/catalogSlice';
+import { ShoppingBag, Heart, ChevronRight, Minus, Plus, ChevronLeft, Award, Star } from 'lucide-react';
+import { fetchProductBySlug, fetchProducts, submitProductReview, clearSelectedItems } from '../../redux/catalogSlice';
 import { addToCart } from '../../redux/cartSlice';
 import { fetchWishlist, addToWishlist, removeFromWishlist } from '../../redux/wishlistSlice';
 import toast from '../../components/Toast';
@@ -10,14 +10,10 @@ import SectionBanner from '../../components/public/shared/SectionBanner';
 import RatingStars from '../../components/public/shared/RatingStars';
 import ProductCard from '../../components/public/shared/ProductCard';
 import {
-  getPlaceholderRating,
-  getPlaceholderReviewCount,
   getPlaceholderCharacteristics,
   getPlaceholderTasteNotes,
   getPlaceholderPairings,
   getPlaceholderAwards,
-  getPlaceholderReviews,
-  getRatingBreakdown,
   getInitials,
   getAvatarColor,
 } from '../../utils/placeholders';
@@ -27,13 +23,22 @@ const ProductDetail = () => {
   const dispatch = useDispatch();
   const { selectedProduct: product, products, productsLoading: loading, error } = useSelector((state) => state.catalog);
   const wishlistItems = useSelector((state) => state.wishlist?.items || []);
+  const { isAuthenticated } = useSelector((state) => state.auth);
 
   const [quantity, setQuantity] = useState(1);
+  const [reviewRating, setReviewRating] = useState(0);
+  const [reviewHoverRating, setReviewHoverRating] = useState(0);
+  const [reviewComment, setReviewComment] = useState('');
+  const [submittingReview, setSubmittingReview] = useState(false);
+  const [reviewSubmitted, setReviewSubmitted] = useState(false);
 
   useEffect(() => {
     dispatch(fetchProductBySlug(slug));
     dispatch(fetchWishlist());
     if (products.length === 0) dispatch(fetchProducts());
+    setReviewRating(0);
+    setReviewComment('');
+    setReviewSubmitted(false);
 
     return () => {
       dispatch(clearSelectedItems());
@@ -67,14 +72,16 @@ const ProductDetail = () => {
   const isOnSale = product.sale_price && product.sale_price < product.price;
   const isWishlisted = wishlistItems.some((item) => (item.product_id ?? item.product?.id ?? item.id) === product.id);
 
-  const rating = getPlaceholderRating(product.id);
-  const reviewCount = getPlaceholderReviewCount(product.id);
+  // A whole average arrives as an integer over JSON (4, not 4.0) — coerce before
+  // formatting. Null (not zero) means no approved reviews yet — never render an
+  // empty star row for that, it reads as "rated zero".
+  const averageRating = product.average_rating != null ? Number(product.average_rating) : null;
+  const reviewsList = product.reviews || [];
+  const reviewsCount = product.reviews_count ?? reviewsList.length;
   const characteristics = getPlaceholderCharacteristics(product.id);
   const tasteNotes = getPlaceholderTasteNotes(product.id);
   const pairings = getPlaceholderPairings(product.id);
   const awards = getPlaceholderAwards(product.id);
-  const reviews = getPlaceholderReviews(product.id);
-  const breakdown = getRatingBreakdown(product.id);
   const similarProducts = products.filter((p) => p.id !== product.id).slice(0, 4);
 
   const handleAddToCart = () => {
@@ -105,6 +112,24 @@ const ProductDetail = () => {
     }
   };
 
+  const handleSubmitReview = async (e) => {
+    e.preventDefault();
+    if (reviewRating < 1) {
+      toast.error('Please select a star rating');
+      return;
+    }
+    setSubmittingReview(true);
+    try {
+      await dispatch(submitProductReview({ slug, rating: reviewRating, comment: reviewComment.trim() || undefined })).unwrap();
+      setReviewSubmitted(true);
+      toast.success('Thanks for your review! It will appear here once approved.');
+    } catch (err) {
+      toast.error(err || 'Failed to submit review');
+    } finally {
+      setSubmittingReview(false);
+    }
+  };
+
   return (
     <div className="bg-cream min-h-screen">
       <SectionBanner
@@ -131,7 +156,11 @@ const ProductDetail = () => {
 
           <div className="w-full lg:w-3/5">
             <div className="mb-6">
-              <RatingStars rating={rating} count={reviewCount} size={16} className="mb-4" />
+              {averageRating != null ? (
+                <RatingStars rating={averageRating} count={reviewsCount} size={16} className="mb-4" />
+              ) : (
+                <p className="text-xs text-zinc-400 mb-4">No reviews yet</p>
+              )}
               <h1 className="text-3xl lg:text-4xl font-serif text-zinc-900 mb-4">{product.name}</h1>
 
               <button className="flex items-center gap-2 border border-zinc-300 px-4 py-2 text-xs text-zinc-600 mb-5 hover:border-forest transition-colors">
@@ -251,43 +280,105 @@ const ProductDetail = () => {
 
         <div className="mt-16">
           <h3 className="font-serif text-2xl text-zinc-900 mb-10">Reviews</h3>
-          <div className="flex flex-col md:flex-row gap-16 mb-12">
-            <div className="text-center shrink-0">
-              <p className="font-serif text-5xl text-zinc-900 mb-2">{rating.toFixed(1)}</p>
-              <RatingStars rating={rating} size={16} className="justify-center mb-2" />
-              <p className="text-xs text-zinc-400">{reviewCount} ratings</p>
-            </div>
-            <div className="flex-1 space-y-2 max-w-md">
-              {breakdown.map((pct, i) => (
-                <div key={i} className="flex items-center gap-3">
-                  <span className="text-xs text-zinc-500 w-10">{5 - i} star</span>
-                  <div className="flex-1 h-1.5 bg-zinc-100 rounded-full overflow-hidden">
-                    <div className="h-full bg-wine rounded-full" style={{ width: `${pct}%` }} />
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
-            {reviews.map((rev) => (
-              <div key={rev.name} className="border-t border-zinc-200 pt-6">
-                <div className="flex items-center gap-3 mb-3">
-                  <span
-                    className="w-9 h-9 rounded-full flex items-center justify-center text-white text-xs font-bold"
-                    style={{ backgroundColor: getAvatarColor(rev.name) }}
-                  >
-                    {getInitials(rev.name)}
-                  </span>
-                  <div>
-                    <p className="text-sm font-medium text-zinc-900">{rev.name}</p>
-                    <p className="text-[11px] text-zinc-400">{rev.date}</p>
-                  </div>
-                </div>
-                <RatingStars rating={rev.rating} className="mb-3" />
-                <p className="text-sm text-zinc-500 font-light leading-relaxed">{rev.text}</p>
+          {averageRating != null ? (
+            <div className="flex items-center gap-4 mb-12">
+              <p className="font-serif text-5xl text-zinc-900">{averageRating.toFixed(1)}</p>
+              <div>
+                <RatingStars rating={averageRating} size={16} className="mb-1" />
+                <p className="text-xs text-zinc-400">
+                  {reviewsCount} {reviewsCount === 1 ? 'rating' : 'ratings'}
+                </p>
               </div>
-            ))}
+            </div>
+          ) : (
+            <p className="text-sm text-zinc-400 mb-12">No reviews yet — be the first to review this wine.</p>
+          )}
+
+          {reviewsList.length > 0 && (
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-10 mb-16">
+              {reviewsList.map((rev) => {
+                const reviewerName = rev.reviewer?.name || 'Anonymous';
+                return (
+                  <div key={rev.id} className="border-t border-zinc-200 pt-6">
+                    <div className="flex items-center gap-3 mb-3">
+                      {rev.reviewer?.avatar_url ? (
+                        <img src={rev.reviewer.avatar_url} alt={reviewerName} className="w-9 h-9 rounded-full object-cover" />
+                      ) : (
+                        <span
+                          className="w-9 h-9 rounded-full flex items-center justify-center text-white text-xs font-bold shrink-0"
+                          style={{ backgroundColor: getAvatarColor(reviewerName) }}
+                        >
+                          {getInitials(reviewerName)}
+                        </span>
+                      )}
+                      <div>
+                        <p className="text-sm font-medium text-zinc-900">{reviewerName}</p>
+                        <p className="text-[11px] text-zinc-400">
+                          {new Date(rev.created_at).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' })}
+                        </p>
+                      </div>
+                    </div>
+                    <RatingStars rating={rev.rating} className="mb-3" />
+                    {rev.comment && <p className="text-sm text-zinc-500 font-light leading-relaxed">{rev.comment}</p>}
+                  </div>
+                );
+              })}
+            </div>
+          )}
+
+          <div className="bg-white p-8 md:p-10 max-w-xl">
+            <h4 className="font-serif text-lg text-zinc-900 mb-1">Write a Review</h4>
+            {!isAuthenticated ? (
+              <p className="text-sm text-zinc-500 font-light">
+                <Link to="/login" className="text-forest font-medium border-b border-forest hover:text-forest-dark hover:border-forest-dark transition-colors">
+                  Log in
+                </Link>{' '}
+                to leave a review for this wine.
+              </p>
+            ) : reviewSubmitted ? (
+              <p className="text-sm text-zinc-500 font-light">
+                Thanks for your review! It's awaiting approval and will appear here once approved.
+              </p>
+            ) : (
+              <form onSubmit={handleSubmitReview}>
+                <p className="text-xs text-zinc-400 font-light mb-4">Reviews are checked by our team before appearing publicly.</p>
+                <div className="flex items-center gap-1 mb-4">
+                  {[1, 2, 3, 4, 5].map((n) => (
+                    <button
+                      key={n}
+                      type="button"
+                      onClick={() => setReviewRating(n)}
+                      onMouseEnter={() => setReviewHoverRating(n)}
+                      onMouseLeave={() => setReviewHoverRating(0)}
+                      aria-label={`Rate ${n} star${n > 1 ? 's' : ''}`}
+                      className="p-0.5"
+                    >
+                      <Star
+                        size={22}
+                        className={n <= (reviewHoverRating || reviewRating) ? 'fill-wine text-wine' : 'fill-transparent text-wine/30'}
+                      />
+                    </button>
+                  ))}
+                </div>
+                <textarea
+                  value={reviewComment}
+                  onChange={(e) => setReviewComment(e.target.value.slice(0, 1000))}
+                  placeholder="Share your thoughts on this wine (optional)"
+                  rows={4}
+                  maxLength={1000}
+                  className="w-full border border-zinc-300 px-4 py-3 text-sm focus:outline-none focus:border-forest transition-colors mb-2 resize-none"
+                />
+                <p className="text-[11px] text-zinc-400 mb-4">{reviewComment.length}/1000</p>
+                <button
+                  type="submit"
+                  disabled={submittingReview}
+                  className="bg-forest text-white px-8 py-3 text-[11px] font-bold uppercase tracking-widest hover:bg-forest-dark transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  {submittingReview ? 'Submitting...' : 'Submit Review'}
+                </button>
+              </form>
+            )}
           </div>
         </div>
 

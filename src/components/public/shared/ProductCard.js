@@ -6,7 +6,6 @@ import { addToCart } from '../../../redux/cartSlice';
 import { addToWishlist, removeFromWishlist } from '../../../redux/wishlistSlice';
 import toast from '../../Toast';
 import RatingStars from './RatingStars';
-import { getPlaceholderRating } from '../../../utils/placeholders';
 import { getProductImage } from '../../../utils/productImage';
 
 const ProductCard = ({ product, iconVariant = 'heart' }) => {
@@ -15,7 +14,10 @@ const ProductCard = ({ product, iconVariant = 'heart' }) => {
   const wishlistItems = useSelector((state) => state.wishlist?.items || []);
   const isWishlisted = wishlistItems.some((item) => (item.product_id ?? item.product?.id ?? item.id) === product.id);
 
-  const rating = product.rating ?? getPlaceholderRating(product.id ?? product.name);
+  // Null (not zero) means no approved reviews yet — never render an empty star
+  // row for that, it reads as "rated zero".
+  const averageRating = product.average_rating != null ? Number(product.average_rating) : null;
+  const reviewsCount = product.reviews_count ?? 0;
   const subtitle = product.brand?.name || product.regions?.[0]?.name || product.categories?.[0]?.name || 'Bold Imperial';
 
   const handleAddToCart = (e) => {
@@ -73,7 +75,11 @@ const ProductCard = ({ product, iconVariant = 'heart' }) => {
         </button>
       </div>
 
-      <RatingStars rating={rating} className="mb-1.5" />
+      {averageRating != null ? (
+        <RatingStars rating={averageRating} count={reviewsCount} className="mb-1.5" />
+      ) : (
+        <p className="text-[11px] text-zinc-400 mb-1.5">No reviews yet</p>
+      )}
       <p className="text-[11px] text-zinc-400 mb-0.5">{subtitle}</p>
       <h3 className="font-serif text-sm text-zinc-900 mb-1 transition-colors duration-300 group-hover:text-forest">{product.name}</h3>
       <p className="text-wine text-sm font-semibold">GHS {Number(product.sale_price || product.price || 0).toFixed(2)}</p>

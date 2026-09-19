@@ -29,6 +29,23 @@ export const fetchProductBySlug = createAsyncThunk(
   }
 );
 
+// POST /products/{slug}/reviews — a customer who already reviewed this wine gets a
+// 400 (not 422), with the explanation in `message`.
+export const submitProductReview = createAsyncThunk(
+  'catalog/submitProductReview',
+  async ({ slug, rating, comment }, { rejectWithValue }) => {
+    try {
+      const response = await api.post(`${api_url}/v1/products/${slug}/reviews`, { rating, comment });
+      return response.data;
+    } catch (err) {
+      if (err.response?.status === 422 && err.response?.data?.errors) {
+        return rejectWithValue(Object.values(err.response.data.errors).flat().join(' '));
+      }
+      return rejectWithValue(err.response?.data?.message || 'Failed to submit review');
+    }
+  }
+);
+
 // ==========================================
 // 2. PRODUCT CATEGORIES THUNKS (List with query params & Single)
 // ==========================================
