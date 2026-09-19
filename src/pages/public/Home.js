@@ -1,39 +1,32 @@
-import React from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
+import { useDispatch } from 'react-redux';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
+import { fetchProducts, fetchRegions, parseProductsResponse } from '../../redux/catalogSlice';
+import { fetchFoodDishes } from '../../redux/foodPairingSlice';
+import { getProductImage } from '../../utils/productImage';
 import Hero from '../../components/public/home/Hero';
 import CollectionShowcase from '../../components/public/home/CollectionShowcase';
 import TeaserCard from '../../components/public/shared/TeaserCard';
 import Reveal from '../../components/public/shared/Reveal';
 import TopoBand from '../../components/public/shared/TopoBand';
-import besteller01 from '../../assets/images/bestseller01.jpg';
-import besteller02 from '../../assets/images/bestseller02.jpg';
-import besteller03 from '../../assets/images/bestseller03.jpg';
-import besteller04 from '../../assets/images/bestseller04.jpg';
 import exclusiveRangeBg from '../../assets/images/exclusiverangebg.jpg';
 import jarnoBanner from '../../assets/images/cellar.jpg';
 import jarnoBottle from '../../assets/images/home/home-hero02.png';
 
-const bestsellers = [
-  { id: 1, name: 'Bold & Chardon', price: 'GHS 88.00', image: besteller01 },
-  { id: 2, name: 'Molti & Chardon', price: 'GHS 90.00', image: besteller02 },
-  { id: 3, name: 'Andrit Chardon', price: 'GHS 84.00', image: besteller03 },
-  { id: 4, name: 'Molti & Chardon', price: 'GHS 90.00', image: besteller04 },
-];
+// Both endpoints paginate to a small default page size, so a plain list-lookup
+// can silently miss the row we're after — ask for a page big enough to hold it.
+const findByName = (list, name) => list.find((r) => r.name?.toLowerCase() === name.toLowerCase());
 
-const italyFinest = [
-  { id: 5, name: 'Roseé Imperial', price: 'GHS 60.00', image: besteller03 },
-  { id: 6, name: 'Bold Imperial', price: 'GHS 60.00', image: besteller04 },
-  { id: 7, name: 'Bold Imperial', price: 'GHS 60.00', image: besteller01 },
-  { id: 8, name: 'Bold Imperial', price: 'GHS 80.00', image: besteller02 },
-];
-
-const withSalads = [
-  { id: 9, name: 'Bold Imperial', price: 'GHS 99.00', image: besteller02 },
-  { id: 10, name: 'Bold Imperial', price: 'GHS 99.00', image: besteller01 },
-  { id: 11, name: 'Bold Imperial', price: 'GHS 99.00', image: besteller04 },
-  { id: 12, name: 'Bold Imperial', price: 'GHS 99.00', image: besteller03 },
-];
+// Shapes a real product into the flat props TeaserCard/carousel items expect.
+const toTeaser = (p) => ({
+  id: p.id,
+  image: getProductImage(p),
+  name: p.name,
+  subtitle: p.brand?.name || p.categories?.find((c) => c.type === 'wine_type')?.name || p.categories?.[0]?.name || '',
+  price: `GHS ${Number(p.sale_price || p.price || 0).toFixed(2)}`,
+  to: `/shop/${p.slug}`,
+});
 
 const ProductRow = ({ eyebrow, title, items }) => (
   <section className="py-20 px-6 max-w-7xl mx-auto">
@@ -49,36 +42,115 @@ const ProductRow = ({ eyebrow, title, items }) => (
 
     <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
       {items.map((item) => (
-        <TeaserCard key={item.id} image={item.image} name={item.name} price={item.price} />
+        <TeaserCard key={item.id} {...item} />
       ))}
     </div>
   </section>
 );
 
-const CarouselHeader = ({ title }) => (
-  <div className="flex items-center justify-between max-w-7xl mx-auto px-6 py-12">
-    <h2 className="font-serif text-3xl text-zinc-900">{title}</h2>
-    <div className="flex items-center gap-2 text-stone-500">
-      <button type="button" aria-label="Previous" className="hover:text-forest transition-colors p-1">
-        <ChevronLeft size={18} />
-      </button>
-      <button type="button" aria-label="Next" className="hover:text-forest transition-colors p-1">
-        <ChevronRight size={18} />
-      </button>
-    </div>
-  </div>
-);
+// A horizontally-scrolling row of real products, with working left/right arrows.
+const ProductCarousel = ({ title, items }) => {
+  const scrollRef = useRef(null);
+
+  const scrollBy = (direction) => {
+    scrollRef.current?.scrollBy({ left: direction * 320, behavior: 'smooth' });
+  };
+
+  if (items.length === 0) return null;
+
+  return (
+    <section>
+      <div className="flex items-center justify-between max-w-7xl mx-auto px-6 py-12">
+        <h2 className="font-serif text-3xl text-zinc-900">{title}</h2>
+        <div className="flex items-center gap-2 text-stone-500">
+          <button type="button" aria-label="Scroll left" onClick={() => scrollBy(-1)} className="hover:text-forest transition-colors p-1">
+            <ChevronLeft size={18} />
+          </button>
+          <button type="button" aria-label="Scroll right" onClick={() => scrollBy(1)} className="hover:text-forest transition-colors p-1">
+            <ChevronRight size={18} />
+          </button>
+        </div>
+      </div>
+
+      <div
+        ref={scrollRef}
+        className="flex gap-8 overflow-x-auto scroll-smooth px-6 pb-2 max-w-7xl mx-auto [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden"
+      >
+        {items.map((item) => (
+          <div key={item.id} className="w-48 sm:w-56 shrink-0">
+            <TeaserCard {...item} />
+          </div>
+        ))}
+      </div>
+    </section>
+  );
+};
 
 const Home = () => {
+  const dispatch = useDispatch();
+  const [bestsellers, setBestsellers] = useState([]);
+  const [topRated, setTopRated] = useState([]);
+  const [champagnes, setChampagnes] = useState([]);
+  const [italyFinest, setItalyFinest] = useState([]);
+  const [withSalads, setWithSalads] = useState([]);
+
+  useEffect(() => {
+    // min_price=0 — every product in this catalog currently has price 0, so the
+    // shop's default min_price=10 would exclude everything here too.
+    dispatch(fetchProducts({ page: 1, per_page: 4, min_price: 0 }))
+      .unwrap()
+      .then((res) => setBestsellers(parseProductsResponse(res).products.map(toTeaser)))
+      .catch(() => {});
+
+    dispatch(fetchProducts({ page: 2, per_page: 4, min_price: 0 }))
+      .unwrap()
+      .then((res) => setTopRated(parseProductsResponse(res).products.map(toTeaser)))
+      .catch(() => {});
+
+    // No "Champagne" category exists on this backend — champagne is just a
+    // product name here, so `search` is the filter that actually works.
+    dispatch(fetchProducts({ search: 'champagne', per_page: 10, min_price: 0 }))
+      .unwrap()
+      .then((res) => setChampagnes(parseProductsResponse(res).products.map(toTeaser)))
+      .catch(() => {});
+
+    // "Italy's Finest" -> region_id for the Italy country row. Regions paginate
+    // too, so ask for enough of a page to actually contain it.
+    dispatch(fetchRegions({ per_page: 200 }))
+      .unwrap()
+      .then((res) => {
+        const regions = res?.data?.data || res?.data || [];
+        const italy = findByName(regions, 'Italy');
+        if (!italy) return null;
+        return dispatch(fetchProducts({ region_id: italy.id, per_page: 4, min_price: 0 })).unwrap();
+      })
+      .then((res) => res && setItalyFinest(parseProductsResponse(res).products.map(toTeaser)))
+      .catch(() => {});
+
+    // "Great With Salads" -> dish_id for the Salad food pairing.
+    dispatch(fetchFoodDishes({ per_page: 100 }))
+      .unwrap()
+      .then((res) => {
+        const dishes = res?.data?.data || res?.data || [];
+        const salad = findByName(dishes, 'Salad');
+        if (!salad) return null;
+        return dispatch(fetchProducts({ dish_id: salad.id, per_page: 4, min_price: 0 })).unwrap();
+      })
+      .then((res) => res && setWithSalads(parseProductsResponse(res).products.map(toTeaser)))
+      .catch(() => {});
+  }, [dispatch]);
+
   return (
     <div className="bg-cream animate-fade-in">
       <Hero />
- 
-      <Reveal>
-        <ProductRow title="Our Bestsellers" items={bestsellers} />
-      </Reveal>
 
-      <section className="relative h-[85vh] min-h-[620px] w-full overflow-hidden flex items-center">
+      {bestsellers.length > 0 && (
+        <Reveal>
+          <ProductRow title="Our Bestsellers" items={bestsellers} />
+        </Reveal>
+      )}
+
+      <section className="relative h-[50vh] min-h-[380px] w-full overflow-hidden flex items-center">
         <div
           className="absolute inset-0 bg-cover bg-center bg-fixed"
           style={{ backgroundImage: `url(${exclusiveRangeBg})` }}
@@ -102,7 +174,7 @@ const Home = () => {
       </section>
 
       <Reveal>
-        <CarouselHeader title="Top Rated Products" />
+        <ProductCarousel title="Top Rated Products" items={topRated} />
       </Reveal>
 
       <Reveal>
@@ -110,12 +182,14 @@ const Home = () => {
       </Reveal>
 
       <Reveal>
-        <CarouselHeader title="Champagne" />
+        <ProductCarousel title="Champagne" items={champagnes} />
       </Reveal>
 
-      <Reveal>
-        <ProductRow eyebrow="Regions" title="Italy's Finest" items={italyFinest} />
-      </Reveal>
+      {italyFinest.length > 0 && (
+        <Reveal>
+          <ProductRow eyebrow="Regions" title="Italy's Finest" items={italyFinest} />
+        </Reveal>
+      )}
 
       <Reveal>
         <section className="relative py-24 px-6 overflow-hidden">
@@ -143,9 +217,11 @@ const Home = () => {
         </section>
       </Reveal>
 
-      <Reveal>
-        <ProductRow title="Great With Salads" items={withSalads} />
-      </Reveal>
+      {withSalads.length > 0 && (
+        <Reveal>
+          <ProductRow title="Great With Salads" items={withSalads} />
+        </Reveal>
+      )}
 
       <Reveal>
         <CollectionShowcase />

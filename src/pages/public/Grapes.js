@@ -41,7 +41,9 @@ const Grapes = () => {
 
   useEffect(() => {
     // This page only ever needs grape categories — the type is just "grape".
-    dispatch(fetchCategories({ type: 'grape' }));
+    // /categories paginates (15 per page by default) even without asking for it —
+    // without a high per_page this silently drops most grape varieties off the list.
+    dispatch(fetchCategories({ type: 'grape', per_page: 200 }));
     dispatch(fetchFoodDishes({ per_page: 50 }));
     dispatch(fetchWishlist());
   }, [dispatch]);

@@ -44,7 +44,6 @@ export const getPlaceholderPairings = (id) => PAIRING_SETS[hashToIndex(id, PAIRI
 const AWARD_SETS = [
   ['Best Wine Awards', '2nd Best Tasting Award'],
   ['Gold Medal, International Wine Challenge'],
-  ['Decanter World Wine Awards — Silver'],
   [],
 ];
 export const getPlaceholderAwards = (id) => AWARD_SETS[hashToIndex(id, AWARD_SETS.length)];

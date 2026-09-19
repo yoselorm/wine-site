@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useSearchParams } from 'react-router-dom';
+import { Search } from 'lucide-react';
 import { fetchProducts } from '../../redux/catalogSlice';
 import { fetchWishlist } from '../../redux/wishlistSlice';
 import SectionBanner from '../../components/public/shared/SectionBanner';
@@ -31,7 +32,7 @@ const RadioFacet = ({ title, options, selected, onSelect }) => (
 
 const SearchResults = () => {
   const dispatch = useDispatch();
-  const [searchParams] = useSearchParams();
+  const [searchParams, setSearchParams] = useSearchParams();
   const query = searchParams.get('q') || '';
 
   const { products, productsLoading: loading } = useSelector((state) => state.catalog);
@@ -39,20 +40,54 @@ const SearchResults = () => {
   const [grapeVariety, setGrapeVariety] = useState('');
   const [foodPairing, setFoodPairing] = useState('');
   const [maxPrice, setMaxPrice] = useState(500);
+  const [searchInput, setSearchInput] = useState(query);
+
+  useEffect(() => {
+    setSearchInput(query);
+  }, [query]);
 
   useEffect(() => {
     dispatch(fetchWishlist());
   }, [dispatch]);
 
   useEffect(() => {
-    dispatch(fetchProducts({ search: query }));
+    dispatch(fetchProducts({ search: query, min_price: 0 }));
   }, [query, dispatch]);
+
+  const handleSearchSubmit = (e) => {
+    e.preventDefault();
+    const trimmed = searchInput.trim();
+    setSearchParams(trimmed ? { q: trimmed } : {});
+  };
 
   const visibleProducts = products.filter((p) => Number(p.price) <= maxPrice);
 
   return (
     <div className="bg-cream min-h-screen">
       <SectionBanner title={`showing results for "${query || 'all wines'}"`} />
+
+      <div className="max-w-2xl mx-auto px-6 pt-10">
+        <form
+          onSubmit={handleSearchSubmit}
+          className="flex items-center gap-3 border border-zinc-300 focus-within:border-forest transition-colors bg-white px-5 py-3.5"
+        >
+          <Search size={18} className="text-zinc-400 shrink-0" />
+          <input
+            type="text"
+            autoFocus
+            value={searchInput}
+            onChange={(e) => setSearchInput(e.target.value)}
+            placeholder="Search for wines, grapes, regions..."
+            className="flex-1 text-sm outline-none bg-transparent"
+          />
+          <button
+            type="submit"
+            className="text-[11px] font-bold uppercase tracking-widest text-forest hover:text-gold transition-colors shrink-0"
+          >
+            Search
+          </button>
+        </form>
+      </div>
 
       <div className="max-w-7xl mx-auto px-6 py-14">
         <div className="flex flex-col md:flex-row gap-14">

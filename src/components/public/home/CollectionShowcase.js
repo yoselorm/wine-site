@@ -8,9 +8,10 @@ import proseccoImg from '../../../assets/images/grid-proseco.jpeg';
 import redWineImg from '../../../assets/images/grid-redwine.jpeg';
 import whiteWineImg from '../../../assets/images/grid-whitewine.jpeg';
 
-const StyleTile = ({ image, title, description, to = '/shop', className = '' }) => (
+const StyleTile = ({ image, title, description, to = '/shop', state, className = '' }) => (
   <Link
     to={to}
+    state={state}
     className={`group relative flex items-end justify-center overflow-hidden ${className}`}
   >
     <img
@@ -66,6 +67,7 @@ const CollectionShowcase = () => {
           image={roseImg}
           title="Rosé"
           description="Delicate, dry and endlessly food-friendly — our pick of rosé for warm-weather sipping."
+          state={{ categorySlug: 'rose-wine' }}
           className="h-96 md:h-[32rem]"
         />
 
@@ -74,7 +76,7 @@ const CollectionShowcase = () => {
             image={champagneImg}
             title="Champagne"
             description="Celebration in a glass. Grower champagnes and classic houses, cellared and ready to pour."
-            to="/shop?category=champagne"
+            state={{ search: 'champagne' }}
             className="h-96 md:h-auto md:w-1/2"
           />
           <div className="md:w-1/2 flex flex-col gap-4">
@@ -82,6 +84,7 @@ const CollectionShowcase = () => {
               image={proseccoImg}
               title="Prosecco"
               description="Light, bright and effortlessly sociable — perfect for aperitivo hour."
+              state={{ search: 'prosecco' }}
               className="h-72 flex-1"
             />
             <StyleTile
@@ -97,6 +100,7 @@ const CollectionShowcase = () => {
           image={whiteWineImg}
           title="White Wine"
           description="Crisp, aromatic whites sourced from cool-climate vineyards around the world."
+          state={{ categorySlug: 'white-wine' }}
           className="h-96 md:h-[32rem]"
         />
       </div>

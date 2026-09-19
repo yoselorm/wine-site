@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
-import { Send, Wine, Plus, ThumbsUp, ThumbsDown, ArrowLeft, MessageSquare } from 'lucide-react';
+import { Send, Wine, Plus, ThumbsUp, ThumbsDown, ArrowLeft } from 'lucide-react';
 import {
   sendSommelierMessage,
   fetchSommelierHistory,
@@ -10,6 +10,7 @@ import {
 } from '../../redux/sommelierSlice';
 import { addToCart } from '../../redux/cartSlice';
 import toast from '../../components/Toast';
+import { getProductImage } from '../../utils/productImage';
 
 // Renders assistant text with a typewriter effect, once, on mount.
 const TypingText = ({ text, speed = 18, onDone }) => {
@@ -129,7 +130,13 @@ const Sommelier = () => {
                     viewingHistoryItem?.id === item.id ? 'bg-cream' : ''
                   }`}
                 >
-                  <MessageSquare size={14} className="text-zinc-400 mt-0.5 shrink-0" />
+                  <div className="w-9 h-12 rounded bg-zinc-100 shrink-0 overflow-hidden">
+                    <img
+                      src={getProductImage(item.product)}
+                      alt={item.product?.name || ''}
+                      className="w-full h-full object-cover"
+                    />
+                  </div>
                   <div className="min-w-0 flex-1">
                     <p className="text-sm font-serif text-zinc-900 truncate">{item.product?.name}</p>
                     <p className="text-[11px] text-zinc-400 mt-0.5">

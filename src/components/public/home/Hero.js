@@ -1,34 +1,35 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
+import { useDispatch } from 'react-redux';
 import { ChevronLeft, ChevronRight, Plus } from 'lucide-react';
+import { fetchProducts, parseProductsResponse } from '../../../redux/catalogSlice';
+import { getProductImage } from '../../../utils/productImage';
 import heroBottleRed from '../../../assets/images/home/homehero01.png';
 import heroBottleWhite from '../../../assets/images/home/homehero02.png';
-import thumb1 from '../../../assets/images/bestseller02.jpg';
-import thumb2 from '../../../assets/images/bestseller03.jpg';
-import thumb3 from '../../../assets/images/bestseller04.jpg';
-
-const newArrivals = [
-  {
-    sub: 'Moët & Chandon | Paris',
-    name: 'Moet Impérial',
-    image: thumb1,
-    to: '/shop',
-  },
-  {
-    sub: 'Moët & Chandon | Paris',
-    name: 'Podere Castorani',
-    image: thumb2,
-    to: '/shop',
-  },
-  {
-    sub: 'Moët & Chandon | Paris',
-    name: 'Jarno Jozzo',
-    image: thumb3,
-    to: '/shop',
-  },
-];
 
 const Hero = () => {
+  const dispatch = useDispatch();
+  const [newArrivals, setNewArrivals] = useState([]);
+
+  useEffect(() => {
+    // min_price=0 — every product in this catalog currently has price 0, so the
+    // shop's default min_price=10 would exclude everything here too.
+    dispatch(fetchProducts({ sort_by: 'created_at', sort_order: 'desc', per_page: 3, min_price: 0 }))
+      .unwrap()
+      .then((res) => {
+        const products = parseProductsResponse(res).products;
+        setNewArrivals(
+          products.map((p) => ({
+            sub: p.brand?.name || p.categories?.[0]?.name || '',
+            name: p.name,
+            image: getProductImage(p),
+            to: `/shop/${p.slug}`,
+          }))
+        );
+      })
+      .catch(() => {});
+  }, [dispatch]);
+
   return (
     <section className="relative bg-[#FFF9F3] overflow-hidden pt-8 pb-14 lg:py-16">
       <div className="max-w-7xl mx-auto px-6 sm:px-8 w-full grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-8 items-center relative z-10">

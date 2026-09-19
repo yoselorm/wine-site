@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
+import { Eye, EyeOff } from 'lucide-react';
 import { registerUser, clearStatus } from '../../redux/authSlice';
 import WaveDecor from '../../components/public/shared/WaveDecor';
 import toast from '../../components/Toast';
@@ -18,6 +19,8 @@ const Register = () => {
     password: '',
     password_confirmation: '',
   });
+  const [showPassword, setShowPassword] = useState(false);
+  const [showPasswordConfirm, setShowPasswordConfirm] = useState(false);
 
   const handleChange = (e) => {
     setFormData((prev) => ({ ...prev, [e.target.name]: e.target.value }));
@@ -102,26 +105,46 @@ const Register = () => {
           <form onSubmit={handleSubmit} className="space-y-6 text-left">
             <div>
               <label className="block text-sm text-zinc-700 mb-1">Password</label>
-              <input
-                type="password"
-                name="password"
-                required
-                autoFocus
-                value={formData.password}
-                onChange={handleChange}
-                className="w-full border border-zinc-300 focus:border-gold px-4 py-2.5 text-sm focus:outline-none transition-colors"
-              />
+              <div className="relative">
+                <input
+                  type={showPassword ? 'text' : 'password'}
+                  name="password"
+                  required
+                  autoFocus
+                  value={formData.password}
+                  onChange={handleChange}
+                  className="w-full border border-zinc-300 focus:border-gold px-4 py-2.5 pr-11 text-sm focus:outline-none transition-colors"
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword((v) => !v)}
+                  aria-label={showPassword ? 'Hide password' : 'Show password'}
+                  className="absolute inset-y-0 right-0 flex items-center px-3 text-zinc-400 hover:text-zinc-600 transition-colors"
+                >
+                  {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
+                </button>
+              </div>
             </div>
             <div>
               <label className="block text-sm text-zinc-700 mb-1">Confirm password</label>
-              <input
-                type="password"
-                name="password_confirmation"
-                required
-                value={formData.password_confirmation}
-                onChange={handleChange}
-                className="w-full border border-zinc-300 focus:border-gold px-4 py-2.5 text-sm focus:outline-none transition-colors"
-              />
+              <div className="relative">
+                <input
+                  type={showPasswordConfirm ? 'text' : 'password'}
+                  name="password_confirmation"
+                  required
+                  value={formData.password_confirmation}
+                  onChange={handleChange}
+                  className="w-full border border-zinc-300 focus:border-gold px-4 py-2.5 pr-11 text-sm focus:outline-none transition-colors"
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPasswordConfirm((v) => !v)}
+                  aria-label={showPasswordConfirm ? 'Hide password' : 'Show password'}
+                  className="absolute inset-y-0 right-0 flex items-center px-3 text-zinc-400 hover:text-zinc-600 transition-colors"
+                >
+                  {showPasswordConfirm ? <EyeOff size={16} /> : <Eye size={16} />}
+                </button>
+              </div>
             </div>
 
             <div className="flex items-center justify-between">

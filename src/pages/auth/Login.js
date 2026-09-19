@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
+import { Eye, EyeOff } from 'lucide-react';
 import { loginUser, clearStatus } from '../../redux/authSlice';
 import WaveDecor from '../../components/public/shared/WaveDecor';
 import toast from '../../components/Toast';
@@ -10,6 +11,7 @@ const Login = () => {
   const navigate = useNavigate();
   const { loading, error } = useSelector((state) => state.auth);
   const [formData, setFormData] = useState({ email: '', password: '' });
+  const [showPassword, setShowPassword] = useState(false);
 
   const handleChange = (e) => {
     setFormData((prev) => ({ ...prev, [e.target.name]: e.target.value }));
@@ -54,14 +56,24 @@ const Login = () => {
 
           <div>
             <label className="block text-sm text-zinc-700 mb-1">Password</label>
-            <input
-              type="password"
-              name="password"
-              required
-              value={formData.password}
-              onChange={handleChange}
-              className="w-full border border-zinc-300 px-4 py-2.5 text-sm focus:outline-none focus:border-gold transition-colors"
-            />
+            <div className="relative">
+              <input
+                type={showPassword ? 'text' : 'password'}
+                name="password"
+                required
+                value={formData.password}
+                onChange={handleChange}
+                className="w-full border border-zinc-300 px-4 py-2.5 pr-11 text-sm focus:outline-none focus:border-gold transition-colors"
+              />
+              <button
+                type="button"
+                onClick={() => setShowPassword((v) => !v)}
+                aria-label={showPassword ? 'Hide password' : 'Show password'}
+                className="absolute inset-y-0 right-0 flex items-center px-3 text-zinc-400 hover:text-zinc-600 transition-colors"
+              >
+                {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
+              </button>
+            </div>
             <div className="text-right mt-2">
               <button type="button" className="text-xs text-zinc-500 hover:text-gold underline underline-offset-2">
                 I forgot my password

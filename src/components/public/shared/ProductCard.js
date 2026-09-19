@@ -7,15 +7,7 @@ import { addToWishlist, removeFromWishlist } from '../../../redux/wishlistSlice'
 import toast from '../../Toast';
 import RatingStars from './RatingStars';
 import { getPlaceholderRating } from '../../../utils/placeholders';
-
-const PLACEHOLDER_IMAGE = 'https://via.placeholder.com/600x800.png?text=No+Image';
-
-const getProductImage = (product) =>
-  product.images?.find((img) => img.is_primary)?.image_url ||
-  product.images?.[0]?.image_url ||
-  product.image_url ||
-  product.image ||
-  PLACEHOLDER_IMAGE;
+import { getProductImage } from '../../../utils/productImage';
 
 const ProductCard = ({ product, iconVariant = 'heart' }) => {
   const dispatch = useDispatch();

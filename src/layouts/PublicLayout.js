@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Outlet, Link, useNavigate, useLocation } from 'react-router-dom';
 import { createPortal } from 'react-dom';
 import { ShoppingBag, Search, ChevronDown, Wine, User, Menu, X } from 'lucide-react';
@@ -17,8 +17,10 @@ const NAV_LINKS = [
   // `state` (not a URL search param) survives Shop's own URL rewriting, and
   // `location.key` changing on every navigation means Shop re-resolves this even
   // when it's already mounted on /shop — e.g. clicking between these two links.
-  { label: 'Champagnes', to: '/shop', state: { categorySlug: 'champagne' } },
-  { label: 'Cognacs', to: '/shop', state: { categorySlug: 'cognac' } },
+  // Champagne/Cognac aren't categories on this backend, just product names —
+  // `search` is the mechanism that actually filters for them.
+  { label: 'Champagnes', to: '/shop', state: { search: 'champagne' } },
+  { label: 'Cognacs', to: '/shop', state: { search: 'cognac' } },
   { label: 'Pairings', to: '/pairings' },
   { label: 'Grapes', to: '/grapes' },
   { label: 'Regions', to: '/shop' },
@@ -33,6 +35,9 @@ const PublicLayout = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [drawerVisible, setDrawerVisible] = useState(false);
   const [drawerShown, setDrawerShown] = useState(false);
+  const [searchOpen, setSearchOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
+  const searchInputRef = useRef(null);
 
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -48,10 +53,16 @@ const PublicLayout = () => {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
+  useEffect(() => {
+    if (searchOpen) searchInputRef.current?.focus();
+  }, [searchOpen]);
+
   const handleSearchSubmit = (e) => {
     e.preventDefault();
-    const q = e.target.elements.q?.value?.trim() || '';
+    const q = searchQuery.trim();
     navigate(q ? `/search?q=${encodeURIComponent(q)}` : '/search');
+    setSearchOpen(false);
+    setSearchQuery('');
   };
 
   const displayName = user?.first_name
@@ -131,16 +142,38 @@ const PublicLayout = () => {
 
           {/* Actions: Search, Cart, Account */}
           <div className="flex items-center gap-2.5 sm:gap-4 md:gap-6 text-stone-700 shrink-0">
-            <form onSubmit={handleSearchSubmit} className="hidden md:flex items-center">
+            <div className="hidden md:block relative">
+              {searchOpen && (
+                <form
+                  onSubmit={handleSearchSubmit}
+                  className="absolute right-full mr-2 top-1/2 -translate-y-1/2 flex items-center gap-1 bg-white shadow-lg rounded-full border border-stone-200 pl-4 pr-1.5 py-1.5 z-10"
+                >
+                  <input
+                    ref={searchInputRef}
+                    type="text"
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    placeholder="Search wines..."
+                    className="w-56 text-sm text-stone-800 outline-none bg-transparent placeholder:text-stone-400"
+                  />
+                  <button
+                    type="submit"
+                    aria-label="Submit search"
+                    className="w-7 h-7 rounded-full flex items-center justify-center text-stone-500 hover:text-[#1F3D2B] hover:bg-stone-100 transition-colors shrink-0"
+                  >
+                    <Search size={15} strokeWidth={1.8} />
+                  </button>
+                </form>
+              )}
               <button
-                type="submit"
-                aria-label="Search"
+                type="button"
+                onClick={() => setSearchOpen((v) => !v)}
+                aria-label={searchOpen ? 'Close search' : 'Search'}
                 className="hover:text-[#1F3D2B] transition-colors p-1"
               >
-                <Search size={17} strokeWidth={1.8} />
+                {searchOpen ? <X size={17} strokeWidth={1.8} /> : <Search size={17} strokeWidth={1.8} />}
               </button>
-              <input type="hidden" name="q" />
-            </form>
+            </div>
             <Link
               to="/search"
               className="md:hidden hover:text-[#1F3D2B] transition-colors p-1"
@@ -386,10 +419,10 @@ const PublicLayout = () => {
               <Link to="/shop" className="text-[13px] text-stone-300/90 hover:text-white transition-colors w-fit font-light">
                 Wines
               </Link>
-              <Link to="/shop" state={{ categorySlug: 'champagne' }} className="text-[13px] text-stone-300/90 hover:text-white transition-colors w-fit font-light">
+              <Link to="/shop" state={{ search: 'champagne' }} className="text-[13px] text-stone-300/90 hover:text-white transition-colors w-fit font-light">
                 Champagnes
               </Link>
-              <Link to="/shop" state={{ categorySlug: 'cognac' }} className="text-[13px] text-stone-300/90 hover:text-white transition-colors w-fit font-light">
+              <Link to="/shop" state={{ search: 'cognac' }} className="text-[13px] text-stone-300/90 hover:text-white transition-colors w-fit font-light">
                 Cognacs
               </Link>
             </div>

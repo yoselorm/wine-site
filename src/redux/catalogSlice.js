@@ -125,6 +125,18 @@ export const fetchBlogCategories = createAsyncThunk(
   }
 );
 
+// The live API has answered `/products` with both a flat `{ data: [...], meta }`
+// shape and (per the integration guide) a nested `{ data: { data: [...], meta } }`
+// shape depending on when it was hit. Handle either so pagination doesn't silently
+// break if/when the backend flips between them.
+export const parseProductsResponse = (raw) => {
+  const dataField = raw?.data;
+  const isNested = !Array.isArray(dataField) && Array.isArray(dataField?.data);
+  const products = isNested ? dataField.data : Array.isArray(dataField) ? dataField : [];
+  const meta = isNested ? dataField.meta || null : raw?.meta || null;
+  return { products, meta };
+};
+
 // ==========================================
 // CATALOG SLICE CREATION
 // ==========================================
@@ -154,6 +166,13 @@ const catalogSlice = createSlice({
     // the others are still in flight, flashing an empty state before products arrive.
     productsLoading: false,
     productsMeta: null,
+    // Shop/Grapes/Home all fire an initial unfiltered fetchProducts on mount, then
+    // a second, filtered one moments later (e.g. once a nav-link's category/search
+    // intent resolves). Over the real network, responses don't always arrive in
+    // request order — without tracking which request is actually the latest, a
+    // slow *first* response can land after the second and silently overwrite the
+    // correct, filtered result with the stale unfiltered one.
+    productsRequestId: null,
   },
   reducers: {
     clearCatalogStatus: (state) => {
@@ -169,20 +188,27 @@ const catalogSlice = createSlice({
   extraReducers: (builder) => {
     builder
       // Products Lifecycles
-      .addCase(fetchProducts.pending, (state) => { state.productsLoading = true; state.error = null; })
+      .addCase(fetchProducts.pending, (state, action) => {
+        state.productsLoading = true;
+        state.error = null;
+        state.productsRequestId = action.meta.requestId;
+      })
       .addCase(fetchProducts.fulfilled, (state, action) => {
+        // A slower, now-superseded request resolving after a newer one — ignore it
+        // rather than clobber the result the newer request already applied.
+        if (action.meta.requestId !== state.productsRequestId) return;
         state.productsLoading = false;
-        // GET /products is now wrapped in the standard envelope like every other list
-        // endpoint — the array moved one level deeper (data.data.data, not data.data).
-        // Accept either shape defensively rather than hard-coding which is live.
-        const payload = action.payload?.data;
-        const newProducts = Array.isArray(payload) ? payload : payload?.data || [];
-        state.productsMeta = Array.isArray(payload) ? null : payload?.meta || null;
+        const { products: newProducts, meta } = parseProductsResponse(action.payload);
+        state.productsMeta = meta;
         // Page 2+ (Shop's "View More") appends to the existing list instead of replacing it
         const page = Number(action.meta.arg?.page) || 1;
         state.products = page > 1 ? [...state.products, ...newProducts] : newProducts;
       })
-      .addCase(fetchProducts.rejected, (state, action) => { state.productsLoading = false; state.error = action.payload; })
+      .addCase(fetchProducts.rejected, (state, action) => {
+        if (action.meta.requestId !== state.productsRequestId) return;
+        state.productsLoading = false;
+        state.error = action.payload;
+      })
 
       .addCase(fetchProductBySlug.pending, (state) => { state.productsLoading = true; state.error = null; })
       .addCase(fetchProductBySlug.fulfilled, (state, action) => {

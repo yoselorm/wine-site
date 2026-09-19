@@ -41,7 +41,10 @@ const Shop = () => {
   const dishOptions = dishes.map((d) => ({ value: d.id, label: d.name }));
 
   useEffect(() => {
-    dispatch(fetchCategories({ type: 'wine_type,grape' }));
+    // /categories paginates (15 per page by default) even without asking for it —
+    // without a high per_page this silently drops most grapes and even some wine
+    // types (Rosé Wine included) off the end of the facet list.
+    dispatch(fetchCategories({ type: 'wine_type,grape', per_page: 200 }));
     dispatch(fetchRegions());
     dispatch(fetchFoodDishes({ per_page: 50 }));
     dispatch(fetchWishlist());
@@ -54,22 +57,45 @@ const Shop = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [filters, dispatch]);
 
-  // Header nav links like "Champagnes"/"Cognacs" navigate here with router `state`
-  // (not a URL search param — the effect above rewrites the URL from `filters` on
-  // every change, which would otherwise wipe a `?category=` param out before it's
-  // read). `location.key` is unique per navigation entry, so this correctly re-runs
-  // every time a nav link is clicked, even when Shop was already mounted on `/shop`.
+  // Header/tile links navigate here with router `state`, carrying either a
+  // `categorySlug` (a real category — Rosé, White Wine, ...) or a `search` term
+  // (Champagne/Cognac/Prosecco aren't categories on this backend, just product
+  // names, so `search` is what actually filters for them).
+  //
+  // `location.state` can't be read lazily, though: the effect below calls
+  // `setSearchParams` on every filter change (including the very first render),
+  // which pushes a fresh history entry with no `state` — wiping it out before
+  // categories even finish loading. So it's captured into local state the instant
+  // it arrives, then applied once categories are ready. `location.key` still
+  // drives the capture so this re-fires on every click, even between two links
+  // that both point at `/shop`.
+  const [pendingIntent, setPendingIntent] = useState(location.state || null);
   useEffect(() => {
-    const categorySlug = location.state?.categorySlug;
-    if (!categorySlug || categories.length === 0) return;
-    const match = categories.find(
-      (c) => c.slug === categorySlug || c.name?.toLowerCase() === categorySlug.toLowerCase()
-    );
-    if (match) {
-      setFilters((prev) => (prev.category_id === match.id ? prev : { ...prev, page: 1, category_id: match.id }));
-    }
+    if (location.state) setPendingIntent(location.state);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [location.key, categories]);
+  }, [location.key]);
+
+  useEffect(() => {
+    if (!pendingIntent) return;
+    const { categorySlug, search: searchTerm } = pendingIntent;
+    if (categorySlug) {
+      if (categories.length === 0) return; // wait for categories, don't drop the intent
+      const match = categories.find(
+        (c) => c.slug === categorySlug || c.name?.toLowerCase() === categorySlug.toLowerCase()
+      );
+      if (match) {
+        setFilters((prev) =>
+          prev.category_id === match.id ? prev : { ...prev, page: 1, category_id: match.id, search: '' }
+        );
+      }
+      setPendingIntent(null);
+    } else if (searchTerm) {
+      setFilters((prev) =>
+        prev.search === searchTerm ? prev : { ...prev, page: 1, search: searchTerm, category_id: '' }
+      );
+      setPendingIntent(null);
+    }
+  }, [pendingIntent, categories]);
 
   // Debounce the price slider into a real min_price/max_price request.
   useEffect(() => {
