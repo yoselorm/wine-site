@@ -193,7 +193,7 @@ const Shop = () => {
               <RadioFacet title="Wine Type" options={wineTypeOptions} selected={filters.category_id} onSelect={handleCategorySelect} />
             )}
             {grapeOptions.length > 0 && (
-              <RadioFacet title="Grape Variety" options={grapeOptions} selected={filters.category_id} onSelect={handleCategorySelect} />
+              <RadioFacet title="Grape Variety" options={grapeOptions} selected={filters.category_id} onSelect={handleCategorySelect} scrollable />
             )}
             {dishOptions.length > 0 && (
               <RadioFacet title="Food Pairings" options={dishOptions} selected={filters.dish_id} onSelect={handleDishSelect} scrollable />

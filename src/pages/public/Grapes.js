@@ -160,7 +160,7 @@ const Grapes = () => {
             )}
 
             {grapeOptions.length > 0 && (
-              <RadioFacet title="Grape Variety" options={grapeOptions} selected={filters.category_id} onSelect={handleGrapeSelect} />
+              <RadioFacet title="Grape Variety" options={grapeOptions} selected={filters.category_id} onSelect={handleGrapeSelect} scrollable />
             )}
             {dishOptions.length > 0 && (
               <RadioFacet title="Food Pairings" options={dishOptions} selected={filters.dish_id} onSelect={handleDishSelect} scrollable />
