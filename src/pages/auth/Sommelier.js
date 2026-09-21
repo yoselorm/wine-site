@@ -75,7 +75,7 @@ const Sommelier = () => {
       id: wine.id,
       name: wine.name,
       price: wine.sale_price || wine.price,
-      image_url: wine.image_url,
+      image_url: getProductImage(wine),
       quantity: 1,
     }));
     toast.success(`${wine.name} added to cart`);
@@ -283,24 +283,31 @@ const Sommelier = () => {
                       </div>
 
                       {msg.recommendations?.length > 0 && (
-                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-3">
-                          {msg.recommendations.map((wine) => (
-                            <div key={wine.id} className="border border-zinc-200 rounded-lg p-3 flex gap-3">
-                              <div className="w-14 h-20 bg-zinc-100 shrink-0 overflow-hidden rounded">
-                                {wine.image_url && <img src={wine.image_url} alt={wine.name} className="w-full h-full object-cover" />}
-                              </div>
-                              <div className="flex-1 min-w-0">
-                                <p className="font-serif text-sm text-zinc-900 truncate">{wine.name}</p>
-                                <p className="text-xs text-zinc-400 mb-2">GHS {Number(wine.price).toFixed(2)}</p>
-                                <button
-                                  onClick={() => handleAddToCart(wine)}
-                                  className="text-[10px] font-bold uppercase tracking-widest text-forest border-b border-forest hover:text-forest-dark hover:border-forest-dark transition-colors"
-                                >
-                                  Add to Cart
-                                </button>
-                              </div>
-                            </div>
-                          ))}
+                        <div className="mt-3">
+                          <p className="text-[10px] font-bold uppercase tracking-widest text-zinc-400 mb-2 px-1">Recommendations</p>
+                          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                            {msg.recommendations.map((wine) => (
+                              <Link
+                                key={wine.id}
+                                to={`/shop/${wine.slug}`}
+                                className="border border-zinc-200 rounded-lg p-3 flex gap-3 hover:border-forest transition-colors"
+                              >
+                                <div className="w-14 h-20 bg-zinc-100 shrink-0 overflow-hidden rounded">
+                                  <img src={getProductImage(wine)} alt={wine.name} className="w-full h-full object-cover" />
+                                </div>
+                                <div className="flex-1 min-w-0">
+                                  <p className="font-serif text-sm text-zinc-900 truncate">{wine.name}</p>
+                                  <p className="text-xs text-zinc-400 mb-2">GHS {Number(wine.sale_price || wine.price || 0).toFixed(2)}</p>
+                                  <button
+                                    onClick={(e) => { e.preventDefault(); handleAddToCart(wine); }}
+                                    className="text-[10px] font-bold uppercase tracking-widest text-forest border-b border-forest hover:text-forest-dark hover:border-forest-dark transition-colors"
+                                  >
+                                    Add to Cart
+                                  </button>
+                                </div>
+                              </Link>
+                            ))}
+                          </div>
                         </div>
                       )}
 

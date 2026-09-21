@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
-import { ShoppingBag, Heart, Minus, Plus, Award, Star } from 'lucide-react';
+import { ShoppingBag, Heart, Minus, Plus, Star } from 'lucide-react';
 import { fetchProductBySlug, fetchProducts, submitProductReview, clearSelectedItems } from '../../redux/catalogSlice';
 import { addToCart } from '../../redux/cartSlice';
 import { fetchWishlist, addToWishlist, removeFromWishlist } from '../../redux/wishlistSlice';
@@ -12,7 +12,6 @@ import ProductCard from '../../components/public/shared/ProductCard';
 import InfiniteCarousel from '../../components/public/shared/InfiniteCarousel';
 import {
   getPlaceholderCharacteristics,
-  getPlaceholderAwards,
   getInitials,
   getAvatarColor,
 } from '../../utils/placeholders';
@@ -94,7 +93,6 @@ const ProductDetail = () => {
   const reviewsList = product.reviews || [];
   const reviewsCount = product.reviews_count ?? reviewsList.length;
   const characteristics = getPlaceholderCharacteristics(product.id);
-  const awards = getPlaceholderAwards(product.id);
   const similarProducts = products.filter((p) => p.id !== product.id).slice(0, 12);
 
   // Grouped by dish.is_local (not `pairing_type`, which is authored per-pairing and
@@ -182,10 +180,6 @@ const ProductDetail = () => {
               )}
               <h1 className="text-3xl lg:text-4xl font-serif text-zinc-900 mb-4">{product.name}</h1>
 
-              <button className="flex items-center gap-2 border border-zinc-300 px-4 py-2 text-xs text-zinc-600 mb-5 hover:border-forest transition-colors">
-                Compare
-              </button>
-
               {isOnSale ? (
                 <div className="flex items-center gap-4 mb-4">
                   <span className="text-2xl font-semibold text-wine">GHS{product.sale_price}</span>
@@ -228,16 +222,6 @@ const ProductDetail = () => {
                 <Heart size={20} className={isWishlisted ? 'fill-wine' : ''} />
               </button>
             </div>
-
-            {awards.length > 0 && (
-              <div className="flex flex-wrap gap-4 mb-8">
-                {awards.map((award, i) => (
-                  <div key={i} className="flex items-center gap-2 text-xs text-zinc-600">
-                    <Award size={16} className="text-gold" /> {award}
-                  </div>
-                ))}
-              </div>
-            )}
 
             <div className="mb-10">
               <h3 className="text-[11px] font-bold uppercase tracking-widest text-zinc-900 mb-3">Description</h3>

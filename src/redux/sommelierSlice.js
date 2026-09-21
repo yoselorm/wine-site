@@ -85,7 +85,8 @@ const sommelierSlice = createSlice({
           role: 'assistant',
           content: data?.response || data?.message || data?.reply,
           recommendation_log_id: data?.recommendation_log_id,
-          recommendations: data?.recommendations || [],
+          // The real response field is `recommended_products`, not `recommendations`.
+          recommendations: data?.recommended_products || [],
           timestamp: new Date().toISOString(),
         });
       })

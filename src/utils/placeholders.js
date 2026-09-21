@@ -20,13 +20,6 @@ const CHARACTERISTIC_SETS = [
 ];
 export const getPlaceholderCharacteristics = (id) => CHARACTERISTIC_SETS[hashToIndex(id, CHARACTERISTIC_SETS.length)];
 
-const AWARD_SETS = [
-  ['Best Wine Awards', '2nd Best Tasting Award'],
-  ['Gold Medal, International Wine Challenge'],
-  [],
-];
-export const getPlaceholderAwards = (id) => AWARD_SETS[hashToIndex(id, AWARD_SETS.length)];
-
 const AVATAR_COLORS = ['#8C2F39', '#C08A34', '#2F3A2C', '#6B7A5E', '#A65B4B'];
 export const getAvatarColor = (seed) => AVATAR_COLORS[hashToIndex(seed, AVATAR_COLORS.length)];
 
