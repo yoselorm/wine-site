@@ -3,6 +3,21 @@ import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import api from '../services/Api';
 import { api_url } from '../utils/config';
 
+// GET /v1/quiz — public, no token. Questions are admin-editable, so render whatever
+// comes back rather than caching/hardcoding content; render in the `position` order
+// the API returns, don't resort client-side.
+export const fetchQuizQuestions = createAsyncThunk(
+  'tasteProfile/fetchQuizQuestions',
+  async (_, { rejectWithValue }) => {
+    try {
+      const response = await api.get(`${api_url}/v1/quiz`);
+      return response.data;
+    } catch (err) {
+      return rejectWithValue(err.response?.data?.message || 'Failed to load the taste quiz');
+    }
+  }
+);
+
 export const fetchTasteProfile = createAsyncThunk(
   'tasteProfile/fetchTasteProfile',
   async (_, { rejectWithValue }) => {
@@ -68,6 +83,10 @@ const tasteProfileSlice = createSlice({
     saving: false,
     error: null,
     saveError: null,
+
+    quizQuestions: [],
+    quizLoading: false,
+    quizError: null,
   },
   reducers: {
     clearTasteProfileError: (state) => {
@@ -77,6 +96,19 @@ const tasteProfileSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder
+      .addCase(fetchQuizQuestions.pending, (state) => {
+        state.quizLoading = true;
+        state.quizError = null;
+      })
+      .addCase(fetchQuizQuestions.fulfilled, (state, action) => {
+        state.quizLoading = false;
+        state.quizQuestions = action.payload?.data || [];
+      })
+      .addCase(fetchQuizQuestions.rejected, (state, action) => {
+        state.quizLoading = false;
+        state.quizError = action.payload;
+      })
+
       .addCase(fetchTasteProfile.pending, (state) => {
         state.loading = true;
         state.error = null;

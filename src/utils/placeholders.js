@@ -20,21 +20,6 @@ const CHARACTERISTIC_SETS = [
 ];
 export const getPlaceholderCharacteristics = (id) => CHARACTERISTIC_SETS[hashToIndex(id, CHARACTERISTIC_SETS.length)];
 
-const TASTE_NOTE_SETS = [
-  ['Blackberry', 'Red Fruit', 'Oak'],
-  ['Citrus', 'Green Apple', 'Honey'],
-  ['Cherry', 'Vanilla', 'Spice'],
-  ['Pear', 'Almond', 'Floral'],
-];
-export const getPlaceholderTasteNotes = (id) => TASTE_NOTE_SETS[hashToIndex(id, TASTE_NOTE_SETS.length)];
-
-const PAIRING_SETS = [
-  ['Red Meat', 'Hard Cheese', 'Roast'],
-  ['Seafood', 'Poultry', 'Salad'],
-  ['Pasta', 'Charcuterie', 'Pizza'],
-];
-export const getPlaceholderPairings = (id) => PAIRING_SETS[hashToIndex(id, PAIRING_SETS.length)];
-
 const AWARD_SETS = [
   ['Best Wine Awards', '2nd Best Tasting Award'],
   ['Gold Medal, International Wine Challenge'],

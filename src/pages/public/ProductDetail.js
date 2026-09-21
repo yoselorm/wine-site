@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
-import { ShoppingBag, Heart, ChevronRight, Minus, Plus, ChevronLeft, Award, Star } from 'lucide-react';
+import { ShoppingBag, Heart, Minus, Plus, Award, Star } from 'lucide-react';
 import { fetchProductBySlug, fetchProducts, submitProductReview, clearSelectedItems } from '../../redux/catalogSlice';
 import { addToCart } from '../../redux/cartSlice';
 import { fetchWishlist, addToWishlist, removeFromWishlist } from '../../redux/wishlistSlice';
@@ -9,19 +9,34 @@ import toast from '../../components/Toast';
 import SectionBanner from '../../components/public/shared/SectionBanner';
 import RatingStars from '../../components/public/shared/RatingStars';
 import ProductCard from '../../components/public/shared/ProductCard';
+import InfiniteCarousel from '../../components/public/shared/InfiniteCarousel';
 import {
   getPlaceholderCharacteristics,
-  getPlaceholderTasteNotes,
-  getPlaceholderPairings,
   getPlaceholderAwards,
   getInitials,
   getAvatarColor,
 } from '../../utils/placeholders';
 
+const PairingCard = ({ pairing }) => (
+  <div className="bg-white border border-zinc-200 h-full flex flex-col">
+    <div className="w-full aspect-[4/3] bg-cream flex items-center justify-center overflow-hidden">
+      {pairing.dish?.image_url ? (
+        <img src={pairing.dish.image_url} alt={pairing.dish.name} className="w-full h-full object-cover" />
+      ) : (
+        <span className="font-serif text-3xl text-gold/50">{pairing.dish?.name?.[0]}</span>
+      )}
+    </div>
+    <div className="p-4">
+      <h4 className="font-serif text-sm text-zinc-900 mb-1">{pairing.dish?.name}</h4>
+      {pairing.reason && <p className="text-xs text-zinc-500 font-light leading-relaxed line-clamp-3">{pairing.reason}</p>}
+    </div>
+  </div>
+);
+
 const ProductDetail = () => {
   const { slug } = useParams();
   const dispatch = useDispatch();
-  const { selectedProduct: product, products, productsLoading: loading, error } = useSelector((state) => state.catalog);
+  const { selectedProduct: product, products, productLoading: loading, error } = useSelector((state) => state.catalog);
   const wishlistItems = useSelector((state) => state.wishlist?.items || []);
   const { isAuthenticated } = useSelector((state) => state.auth);
 
@@ -79,10 +94,14 @@ const ProductDetail = () => {
   const reviewsList = product.reviews || [];
   const reviewsCount = product.reviews_count ?? reviewsList.length;
   const characteristics = getPlaceholderCharacteristics(product.id);
-  const tasteNotes = getPlaceholderTasteNotes(product.id);
-  const pairings = getPlaceholderPairings(product.id);
   const awards = getPlaceholderAwards(product.id);
-  const similarProducts = products.filter((p) => p.id !== product.id).slice(0, 4);
+  const similarProducts = products.filter((p) => p.id !== product.id).slice(0, 12);
+
+  // Grouped by dish.is_local (not `pairing_type`, which is authored per-pairing and
+  // can disagree with the dish's own local/international flag) — local dishes first.
+  const pairings = product.pairings || [];
+  const localPairings = pairings.filter((p) => p.dish?.is_local);
+  const internationalPairings = pairings.filter((p) => !p.dish?.is_local);
 
   const handleAddToCart = () => {
     dispatch(
@@ -234,49 +253,49 @@ const ProductDetail = () => {
           </div>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-16 bg-white p-8 md:p-12 mt-16">
-          <div>
-            <h3 className="font-serif text-xl text-zinc-900 mb-8">Characteristics</h3>
-            {[
-              ['Light', 'Bold', characteristics.light_bold],
-              ['Smooth', 'Tannic', characteristics.smooth_tannic],
-              ['Dry', 'Sweet', characteristics.dry_sweet],
-              ['Soft', 'Acidic', characteristics.soft_acidic],
-            ].map(([left, right, val]) => (
-              <div key={left} className="mb-6">
-                <div className="w-full h-1.5 bg-zinc-100 rounded-full relative">
-                  <div className="absolute -top-1 h-3.5 w-3.5 rounded-full bg-forest" style={{ left: `calc(${val}% - 7px)` }} />
-                </div>
-                <div className="flex justify-between text-[11px] text-zinc-500 mt-2">
-                  <span>{left}</span>
-                  <span>{right}</span>
-                </div>
+        <div className="bg-white p-8 md:p-10 mt-16 max-w-md">
+          <h3 className="font-serif text-xl text-zinc-900 mb-8">Characteristics</h3>
+          {[
+            ['Light', 'Bold', characteristics.light_bold],
+            ['Smooth', 'Tannic', characteristics.smooth_tannic],
+            ['Dry', 'Sweet', characteristics.dry_sweet],
+            ['Soft', 'Acidic', characteristics.soft_acidic],
+          ].map(([left, right, val]) => (
+            <div key={left} className="mb-6">
+              <div className="w-full h-1.5 bg-zinc-100 rounded-full relative">
+                <div className="absolute -top-1 h-3.5 w-3.5 rounded-full bg-forest" style={{ left: `calc(${val}% - 7px)` }} />
               </div>
-            ))}
-          </div>
-
-          <div>
-            <h3 className="font-serif text-xl text-zinc-900 mb-8">Taste Notes</h3>
-            <div className="flex gap-4 mb-12 flex-wrap">
-              {tasteNotes.map((note) => (
-                <div key={note} className="flex flex-col items-center gap-2">
-                  <div className="w-16 h-16 rounded-full bg-cream border border-gold/40 flex items-center justify-center text-forest">
-                    <span className="text-[10px] text-center px-1">{note}</span>
-                  </div>
-                </div>
-              ))}
+              <div className="flex justify-between text-[11px] text-zinc-500 mt-2">
+                <span>{left}</span>
+                <span>{right}</span>
+              </div>
             </div>
-
-            <h3 className="font-serif text-xl text-zinc-900 mb-6">Pairings</h3>
-            <div className="flex gap-3 flex-wrap">
-              {pairings.map((pair) => (
-                <span key={pair} className="text-xs px-4 py-2 bg-cream border border-zinc-200 text-zinc-600">
-                  {pair}
-                </span>
-              ))}
-            </div>
-          </div>
+          ))}
         </div>
+
+        {localPairings.length > 0 && (
+          <div className="mt-16">
+            <h3 className="font-serif text-2xl text-zinc-900 mb-8">Local Pairings</h3>
+            <InfiniteCarousel
+              items={localPairings}
+              itemWidth={240}
+              keyFor={(p, i) => `${p.dish_id}-${i}`}
+              renderItem={(pairing) => <PairingCard pairing={pairing} />}
+            />
+          </div>
+        )}
+
+        {internationalPairings.length > 0 && (
+          <div className="mt-16">
+            <h3 className="font-serif text-2xl text-zinc-900 mb-8">International Pairings</h3>
+            <InfiniteCarousel
+              items={internationalPairings}
+              itemWidth={240}
+              keyFor={(p, i) => `${p.dish_id}-${i}`}
+              renderItem={(pairing) => <PairingCard pairing={pairing} />}
+            />
+          </div>
+        )}
 
         <div className="mt-16">
           <h3 className="font-serif text-2xl text-zinc-900 mb-10">Reviews</h3>
@@ -384,18 +403,13 @@ const ProductDetail = () => {
 
         {similarProducts.length > 0 && (
           <div className="mt-20">
-            <div className="flex items-center justify-between mb-10">
-              <h3 className="font-serif text-2xl text-zinc-900">Similar Products</h3>
-              <div className="flex gap-2 text-zinc-400">
-                <ChevronLeft size={18} />
-                <ChevronRight size={18} />
-              </div>
-            </div>
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
-              {similarProducts.map((p) => (
-                <ProductCard key={p.id} product={p} />
-              ))}
-            </div>
+            <h3 className="font-serif text-2xl text-zinc-900 mb-10">Similar Products</h3>
+            <InfiniteCarousel
+              items={similarProducts}
+              itemWidth={240}
+              keyFor={(p) => p.id}
+              renderItem={(p) => <ProductCard product={p} />}
+            />
           </div>
         )}
       </div>

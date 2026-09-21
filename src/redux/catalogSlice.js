@@ -183,6 +183,9 @@ const catalogSlice = createSlice({
     // the others are still in flight, flashing an empty state before products arrive.
     productsLoading: false,
     productsMeta: null,
+    // fetchProductBySlug's own flag — see the comment on its reducer cases below
+    // for why it can't share productsLoading with the list endpoint.
+    productLoading: false,
     // Shop/Grapes/Home all fire an initial unfiltered fetchProducts on mount, then
     // a second, filtered one moments later (e.g. once a nav-link's category/search
     // intent resolves). Over the real network, responses don't always arrive in
@@ -227,12 +230,17 @@ const catalogSlice = createSlice({
         state.error = action.payload;
       })
 
-      .addCase(fetchProductBySlug.pending, (state) => { state.productsLoading = true; state.error = null; })
+      // A dedicated flag rather than sharing `productsLoading`: ProductDetail fires
+      // both this AND fetchProducts (for "Similar Products") on the same page. With
+      // a shared flag, the list fetch resolving later flips loading back to true
+      // right after the page has already rendered — dropping it back to the full
+      // skeleton and unmounting everything underneath, seconds after first paint.
+      .addCase(fetchProductBySlug.pending, (state) => { state.productLoading = true; state.error = null; })
       .addCase(fetchProductBySlug.fulfilled, (state, action) => {
-        state.productsLoading = false;
+        state.productLoading = false;
         state.selectedProduct = action.payload?.data || action.payload;
       })
-      .addCase(fetchProductBySlug.rejected, (state, action) => { state.productsLoading = false; state.error = action.payload; })
+      .addCase(fetchProductBySlug.rejected, (state, action) => { state.productLoading = false; state.error = action.payload; })
       
       // Product Categories Lifecycles
       .addCase(fetchCategories.pending, (state) => { state.loading = true; state.error = null; })

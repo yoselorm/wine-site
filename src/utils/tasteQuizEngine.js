@@ -1,114 +1,10 @@
-
-
-export const QUESTIONS = [
-  {
-    key: 'experience',
-    number: 1,
-    title: 'Experience Level',
-    prompt: 'How would you describe your experience with wine?',
-    type: 'single',
-    options: [
-      { letter: 'A', label: 'Total beginner' },
-      { letter: 'B', label: 'Casual enjoyer' },
-      { letter: 'C', label: 'Enthusiast' },
-      { letter: 'D', label: 'Connoisseur / Expert' },
-    ],
-  },
-  {
-    key: 'color',
-    number: 2,
-    title: 'Wine Colour Preference',
-    prompt: 'When you drink wine, what colour do you usually reach for?',
-    type: 'single',
-    options: [
-      { letter: 'A', label: 'Red, always' },
-      { letter: 'B', label: 'White, mostly' },
-      { letter: 'C', label: 'I love Rosé' },
-      { letter: 'D', label: 'Mix it up' },
-    ],
-  },
-  {
-    key: 'coffee',
-    number: 3,
-    title: 'Coffee / Tea Preference',
-    subtitle: 'Tannin proxy',
-    prompt: 'How do you take your coffee or tea?',
-    type: 'single',
-    options: [
-      { letter: 'A', label: 'Black and strong / espresso' },
-      { letter: 'B', label: 'A little milk or cream' },
-      { letter: 'C', label: 'Lots of milk, sugar, or sweet syrups' },
-      { letter: 'D', label: 'I prefer fruit juice or soda' },
-    ],
-  },
-  {
-    key: 'lemon',
-    number: 4,
-    title: 'Lemon Reaction',
-    subtitle: 'Acidity proxy',
-    prompt: "Imagine you're eating a fresh lemon wedge. What is your reaction?",
-    type: 'single',
-    options: [
-      { letter: 'A', label: 'Love it, extra lemon on everything' },
-      { letter: 'B', label: 'Okay, balanced with something sweet' },
-      { letter: 'C', label: 'Too sour, I pucker up' },
-    ],
-  },
-  {
-    key: 'dessert',
-    number: 5,
-    title: 'Dessert Choice',
-    subtitle: 'Sweetness + flavour proxy',
-    prompt: 'If you were choosing a dessert, which sounds best right now?',
-    type: 'single',
-    options: [
-      { letter: 'A', label: 'Dark chocolate truffles' },
-      { letter: 'B', label: 'Lemon tart or berry sorbet' },
-      { letter: 'C', label: 'Warm apple pie with vanilla ice cream' },
-      { letter: 'D', label: 'Sticky toffee pudding or milk chocolate' },
-      { letter: 'E', label: 'A cheese plate over sweets' },
-    ],
-  },
-  {
-    key: 'fruit',
-    number: 6,
-    title: 'Fruit Flavour Preference',
-    subtitle: 'Primary flavour',
-    prompt: 'What kind of fruit flavours do you find most appealing?',
-    type: 'single',
-    options: [
-      { letter: 'A', label: 'Crisp green apples, pears, citrus' },
-      { letter: 'B', label: 'Tropical fruits (pineapple, mango, passionfruit)' },
-      { letter: 'C', label: 'Tart red berries (raspberries, cherries)' },
-      { letter: 'D', label: 'Dark jammy fruits (blackberries, plums)' },
-    ],
-  },
-  {
-    key: 'dietary',
-    number: 7,
-    title: 'Dietary Restrictions',
-    prompt: 'Do you have any specific dietary preferences regarding wine?',
-    type: 'multi',
-    options: [
-      { value: 'vegan', label: 'Vegan' },
-      { value: 'organic', label: 'Organic / Biodynamic' },
-      { value: 'low-sulfite', label: 'Low Sulfite' },
-    ],
-  },
-  {
-    key: 'budget',
-    number: 8,
-    title: 'Budget Per Bottle',
-    prompt: 'What is your typical comfortable budget for a bottle of wine at home?',
-    type: 'single',
-    options: [
-      { letter: 'A', label: 'Under GHS 150' },
-      { letter: 'B', label: 'GHS 150 – 350' },
-      { letter: 'C', label: 'GHS 350 – 750' },
-      { letter: 'D', label: 'Over GHS 750' },
-    ],
-  },
-];
+// Question content (prompt, help text, options, order) comes from GET /v1/quiz —
+// it's admin-editable, so it must never be hardcoded here. See
+// src/redux/tasteProfileSlice.js's fetchQuizQuestions and TasteQuizModal.js.
+//
+// The derivation logic below (letter/value -> profile field) stays static: the
+// quiz's answer *codes* (A/B/C/D/E, vegan/organic/low-sulfite) are a stable
+// contract independent of how an admin rewords the question or option labels.
 
 export const EXPERIENCE_MAP = { A: 'beginner', B: 'intermediate', C: 'advanced', D: 'expert' };
 export const COLOR_MAP = { A: ['red'], B: ['white'], C: ['rose'], D: ['red', 'white', 'rose', 'sparkling'] };
@@ -137,9 +33,16 @@ export const BUDGET_MAP = {
 
 export const isAdvancedOrExpert = (experienceLetter) => experienceLetter === 'C' || experienceLetter === 'D';
 
-export const isQuizComplete = (answers) => {
-  return ['experience', 'color', 'coffee', 'lemon', 'dessert', 'fruit', 'budget'].every((k) => !!answers[k])
-    && Array.isArray(answers.dietary);
+// Driven by the fetched question list rather than a hardcoded key list, so a
+// question an admin adds, removes or flips required/optional is respected
+// automatically. An empty `questions` list (still loading) is never "complete".
+export const isQuizComplete = (answers, questions = []) => {
+  if (questions.length === 0) return false;
+  return questions.every((q) => {
+    if (!q.is_required) return true;
+    const answer = answers[q.key];
+    return q.input_type === 'multi' ? Array.isArray(answer) : !!answer;
+  });
 };
 
 // Kept for anywhere that just wants the final payload from raw answers alone (e.g. a bulk import)
