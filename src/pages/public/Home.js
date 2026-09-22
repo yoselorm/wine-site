@@ -5,6 +5,7 @@ import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { fetchProducts, fetchRegions, parseProductsResponse } from '../../redux/catalogSlice';
 import { fetchFoodDishes } from '../../redux/foodPairingSlice';
 import { getProductImage } from '../../utils/productImage';
+import { stripHtml } from '../../utils/text';
 import Hero from '../../components/public/home/Hero';
 import CollectionShowcase from '../../components/public/home/CollectionShowcase';
 import TeaserCard from '../../components/public/shared/TeaserCard';
@@ -12,7 +13,6 @@ import Reveal from '../../components/public/shared/Reveal';
 import TopoBand from '../../components/public/shared/TopoBand';
 import exclusiveRangeBg from '../../assets/images/exclusiverangebg.jpg';
 import jarnoBanner from '../../assets/images/cellar.jpg';
-import jarnoBottle from '../../assets/images/home/home-hero02.png';
 
 // Both endpoints paginate to a small default page size, so a plain list-lookup
 // can silently miss the row we're after — ask for a page big enough to hold it.
@@ -91,6 +91,7 @@ const Home = () => {
   const [bestsellers, setBestsellers] = useState([]);
   const [topRated, setTopRated] = useState([]);
   const [champagnes, setChampagnes] = useState([]);
+  const [featuredWine, setFeaturedWine] = useState(null);
   const [italyFinest, setItalyFinest] = useState([]);
   const [withSalads, setWithSalads] = useState([]);
 
@@ -102,16 +103,21 @@ const Home = () => {
       .then((res) => setBestsellers(parseProductsResponse(res).products.map(toTeaser)))
       .catch(() => {});
 
-    dispatch(fetchProducts({ page: 2, per_page: 4, min_price: 0 }))
+    dispatch(fetchProducts({ page: 2, per_page: 6, min_price: 0 }))
       .unwrap()
       .then((res) => setTopRated(parseProductsResponse(res).products.map(toTeaser)))
       .catch(() => {});
 
     // No "Champagne" category exists on this backend — champagne is just a
-    // product name here, so `search` is the filter that actually works.
+    // product name here, so `search` is the filter that actually works. The
+    // first result also becomes the "Featured by W2U" banner below.
     dispatch(fetchProducts({ search: 'champagne', per_page: 10, min_price: 0 }))
       .unwrap()
-      .then((res) => setChampagnes(parseProductsResponse(res).products.map(toTeaser)))
+      .then((res) => {
+        const champagneProducts = parseProductsResponse(res).products;
+        setChampagnes(champagneProducts.map(toTeaser));
+        setFeaturedWine(champagneProducts[0] || null);
+      })
       .catch(() => {});
 
     // "Italy's Finest" -> region_id for the Italy country row. Regions paginate
@@ -191,31 +197,39 @@ const Home = () => {
         </Reveal>
       )}
 
-      <Reveal>
-        <section className="relative py-24 px-6 overflow-hidden">
-          <img src={jarnoBanner} alt="" aria-hidden="true" className="absolute inset-0 w-full h-full object-cover grayscale" />
-          <div className="absolute inset-0 bg-forest/90" />
-          <div className="relative z-10 max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-2 items-center gap-12">
-            <div className="flex justify-center order-2 md:order-1">
-              <img src={jarnoBottle} alt="Jarno Jazzor Wine" className="h-80 w-auto object-contain drop-shadow-2xl" />
+      {featuredWine && (
+        <Reveal>
+          <section className="relative py-24 px-6 overflow-hidden">
+            <img src={jarnoBanner} alt="" aria-hidden="true" className="absolute inset-0 w-full h-full object-cover grayscale" />
+            <div className="absolute inset-0 bg-forest/90" />
+            <div className="relative z-10 max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-2 items-center gap-12">
+              <div className="flex justify-center order-2 md:order-1">
+                <img
+                  src={getProductImage(featuredWine)}
+                  alt={featuredWine.name}
+                  className="h-80 w-auto object-contain drop-shadow-2xl"
+                />
+              </div>
+              <div className="text-center md:text-left order-1 md:order-2">
+                <p className="text-gold-light text-[11px] font-bold uppercase tracking-widest mb-4">Featured by W2U</p>
+                <h2 className="font-serif text-4xl md:text-5xl text-white mb-6">{featuredWine.name}</h2>
+                <p className="text-cream/70 font-light leading-relaxed max-w-md mx-auto md:mx-0 mb-8">
+                  {stripHtml(featuredWine.short_description || featuredWine.description)}
+                </p>
+                <p className="text-gold-light font-serif text-2xl mb-8">
+                  GHS {Number(featuredWine.sale_price || featuredWine.price || 0).toFixed(2)}
+                </p>
+                <Link
+                  to={`/shop/${featuredWine.slug}`}
+                  className="inline-block border border-gold text-gold px-8 py-3 text-[11px] font-bold uppercase tracking-widest hover:bg-gold hover:text-forest-dark transition-colors duration-300"
+                >
+                  Discover More
+                </Link>
+              </div>
             </div>
-            <div className="text-center md:text-left order-1 md:order-2">
-              <p className="text-gold-light text-[11px] font-bold uppercase tracking-widest mb-4">Featured by W2U</p>
-              <h2 className="font-serif text-4xl md:text-5xl text-white mb-6">Jarno Jazzor Wine</h2>
-              <p className="text-cream/70 font-light leading-relaxed max-w-md mx-auto md:mx-0 mb-8">
-                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent tempus, tellus at semper cursus, ante velit convallis massa.
-              </p>
-              <p className="text-gold-light font-serif text-2xl mb-8">GHS 118.00</p>
-              <Link
-                to="/shop"
-                className="inline-block border border-gold text-gold px-8 py-3 text-[11px] font-bold uppercase tracking-widest hover:bg-gold hover:text-forest-dark transition-colors duration-300"
-              >
-                Discover More
-              </Link>
-            </div>
-          </div>
-        </section>
-      </Reveal>
+          </section>
+        </Reveal>
+      )}
 
       {withSalads.length > 0 && (
         <Reveal>

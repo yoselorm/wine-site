@@ -5,6 +5,7 @@ import { ShoppingBag, Search, ChevronDown, Wine, User, Menu, X } from 'lucide-re
 import { useSelector } from 'react-redux';
 import TasteProfileReminderModal from '../components/auth/TasteProfileReminderModal';
 import NewsletterModal from '../components/public/NewsletterModal';
+import AgeVerificationModal from '../components/public/AgeVerificationModal';
 import AppCTA from '../components/public/home/AppCTA';
 import { FacebookIcon, TwitterIcon, InstagramIcon } from '../components/public/shared/SocialIcons';
 import { getInitials } from '../utils/placeholders';
@@ -81,6 +82,7 @@ const PublicLayout = () => {
 
   return (
     <div className="min-h-screen flex flex-col bg-[#FAF7F2] text-[#2C2C2C] font-sans antialiased selection:bg-[#C5A880] selection:text-white">
+      <AgeVerificationModal />
       <TasteProfileReminderModal />
       <NewsletterModal />
 
