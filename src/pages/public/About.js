@@ -1,14 +1,13 @@
 import React from 'react';
 import { Users, TrendingUp, Grape, ThumbsUp } from 'lucide-react';
 import heroImg from '../../assets/images/about/about-us-hero.jpg';
-import bannerAfterDiff from '../../assets/images/about/what-makes-us-diff.png';
+import bannerAfterDiff from '../../assets/images/about/newabout-details1.jpg';
 import convenienceImg from '../../assets/images/about/convenience.jpg';
 import ownYourPalateImg from '../../assets/images/about/own-your-plate.jpg';
-import bannerBeforeExperience from '../../assets/images/about/own-your-plate-b.jpg';
+import bannerBeforeExperience from '../../assets/images/about/new-about-details2.jpg';
 import experienceImg from '../../assets/images/about/the-experience.jpg';
-import premiumImg from '../../assets/images/about/premium-quality.jpg';
-import bannerBeforeInteraction from '../../assets/images/about/about-int.jpg';
-import interactionsImg from '../../assets/images/about/interactions.png';
+import premiumImg from '../../assets/images/about/premiun.jpg';
+import interactionsImg from '../../assets/images/about/interaction.jpg';
 
 const differentiators = [
   { icon: Users, text: 'We are a team of friendly and passionate people' },
@@ -32,7 +31,7 @@ const Row = ({ eyebrow, title, text, image, reverse, imageFit = 'cover' }) => (
         {imageFit === 'contain' ? (
           <img src={image} alt={title} className="w-full h-auto" />
         ) : (
-          <img src={image} alt={title} className="w-full aspect-[4/3] object-cover" />
+          <img src={image} alt={title} className="w-full aspect-square object-cover" />
         )}
       </div>
       <div className="w-full md:w-1/2">
@@ -101,7 +100,7 @@ const About = () => {
         </p>
       </section>
 
-      <img src={bannerAfterDiff} alt="" aria-hidden="true" className="w-full h-[45vh] md:h-[60vh] object-cover" />
+      <img src={bannerAfterDiff} alt="" aria-hidden="true" className="w-full h-[45vh] md:h-[65vh] object-cover" />
 
       <Row
         eyebrow="Effortless"
@@ -185,7 +184,6 @@ const About = () => {
         }
       />
 
-      <img src={bannerBeforeInteraction} alt="" aria-hidden="true" className="w-full h-[45vh] md:h-[60vh] object-bottom object-cover" />
 
       <Row
         eyebrow="Anywhere, Anytime"
