@@ -1,21 +1,24 @@
 import React from 'react';
-import SectionBanner from '../../components/public/shared/SectionBanner';
+import WaveDecor from '../../components/public/shared/WaveDecor';
+import privacyTermsWave from '../../assets/images/privacyandterms.svg';
 
 const Section = ({ title, children }) => (
   <div className="mb-10">
     <h2 className="font-serif text-2xl text-zinc-900 mb-4">{title}</h2>
-    <div className="space-y-4 text-base text-zinc-600 font-light leading-relaxed">{children}</div>
+    <div className="space-y-4 text-sm text-zinc-600 leading-relaxed">{children}</div>
   </div>
 );
 
 const TermsConditions = () => {
   return (
-    <div className="bg-cream min-h-screen">
-      <SectionBanner title="Terms & Conditions" breadcrumbs={[{ label: 'Home', to: '/' }, { label: 'Terms & Conditions' }]} />
+    <div className="relative min-h-screen overflow-hidden">
+      <WaveDecor src={privacyTermsWave} />
 
-      <div className="max-w-3xl mx-auto px-6 py-16">
-        <div className="space-y-4 text-base text-zinc-600 font-light leading-relaxed mb-10">
-          <p className="text-center font-medium text-zinc-700">Welcome to wine2u.com!</p>
+      <div className="relative z-10 max-w-2xl mx-auto px-6 py-16 text-center">
+        <h1 className="font-serif text-4xl text-zinc-900 mb-6">Terms &amp; Conditions</h1>
+
+        <div className="space-y-4 text-sm text-zinc-600 leading-relaxed mb-10">
+          <p className="font-medium text-zinc-700">Welcome to wine2u.com!</p>
           <p>
             These terms and conditions outline the rules and regulations for the use of wine2u's website, located
             at wine2u.com.
@@ -55,7 +58,7 @@ const TermsConditions = () => {
             wine2u.com for your own personal use subjected to restrictions set in these terms and conditions.
           </p>
           <p>You must not:</p>
-          <ul className="list-disc pl-6 space-y-2">
+          <ul className="list-disc pl-6 space-y-2 text-left">
             <li>Republish material from wine2u.com</li>
             <li>Sell, rent or sub-license material from wine2u.com</li>
             <li>Reproduce, duplicate or copy material from wine2u.com</li>
@@ -75,7 +78,7 @@ const TermsConditions = () => {
             inappropriate, offensive or causes breach of these Terms and Conditions.
           </p>
           <p>You warrant and represent that:</p>
-          <ul className="list-disc pl-6 space-y-2">
+          <ul className="list-disc pl-6 space-y-2 text-left">
             <li>You are entitled to post the Comments on our website and have all necessary licenses and consents to do so;</li>
             <li>The Comments do not invade any intellectual property right, including without limitation copyright, patent or trademark of any third party;</li>
             <li>The Comments do not contain any defamatory, libelous, offensive, indecent or otherwise unlawful material which is an invasion of privacy;</li>
@@ -89,7 +92,7 @@ const TermsConditions = () => {
 
         <Section title="Hyperlinking to Our Content">
           <p>The following organizations may link to our website without prior written approval:</p>
-          <ul className="list-disc pl-6 space-y-2">
+          <ul className="list-disc pl-6 space-y-2 text-left">
             <li>Government agencies;</li>
             <li>Search engines;</li>
             <li>News organizations;</li>
@@ -103,7 +106,7 @@ const TermsConditions = () => {
             the linking party's site.
           </p>
           <p>We may consider and approve other link requests from the following types of organizations:</p>
-          <ul className="list-disc pl-6 space-y-2">
+          <ul className="list-disc pl-6 space-y-2 text-left">
             <li>Commonly-known consumer and/or business information sources;</li>
             <li>Dot.com community sites;</li>
             <li>Associations or other groups representing charities;</li>
@@ -126,7 +129,7 @@ const TermsConditions = () => {
             for a response.
           </p>
           <p>Approved organizations may hyperlink to our website as follows:</p>
-          <ul className="list-disc pl-6 space-y-2">
+          <ul className="list-disc pl-6 space-y-2 text-left">
             <li>By use of our corporate name; or</li>
             <li>By use of the uniform resource locator being linked to; or</li>
             <li>By use of any other description of our website being linked to that makes sense within the context and format of content on the linking party's site.</li>
@@ -181,7 +184,7 @@ const TermsConditions = () => {
             To the maximum extent permitted by applicable law, we exclude all representations, warranties and
             conditions relating to our website and the use of this website. Nothing in this disclaimer will:
           </p>
-          <ul className="list-disc pl-6 space-y-2">
+          <ul className="list-disc pl-6 space-y-2 text-left">
             <li>Limit or exclude our or your liability for death or personal injury;</li>
             <li>Limit or exclude our or your liability for fraud or fraudulent misrepresentation;</li>
             <li>Limit any of our or your liabilities in any way that is not permitted under applicable law; or</li>

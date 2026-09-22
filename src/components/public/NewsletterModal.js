@@ -2,8 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { X } from 'lucide-react';
 import { createPortal } from 'react-dom';
 import toast from '../Toast';
-import bottleImg from '../../assets/images/home/home-hero02.png';
-import grapesImg from '../../assets/images/home/who-we-are-grapes.png';
+import bottleImg from '../../assets/images/newletter.jpg';
 
 const DISMISS_KEY = 'w2u_newsletter_seen';
 
@@ -52,19 +51,18 @@ const NewsletterModal = () => {
         <button
           onClick={dismiss}
           aria-label="Close"
-          className="absolute top-4 right-4 text-white/80 hover:text-white z-10 transition-colors"
+          className="absolute top-4 right-4 text-white bg-black/20 hover:bg-black/40 p-1.5 rounded-full z-20 transition-colors"
         >
-          <X size={20} />
+          <X size={18} />
         </button>
 
-        <div className="relative bg-forest-dark h-56 flex items-center justify-center overflow-hidden">
-          <img
-            src={grapesImg}
-            alt=""
-            aria-hidden="true"
-            className="absolute -bottom-4 -left-6 w-24 opacity-90"
+        {/* Added sm:h-64 to increase height on larger screens */}
+        <div className="relative bg-forest-dark h-56 sm:h-64 flex items-center justify-center overflow-hidden">
+          <img 
+            src={bottleImg} 
+            alt="Newsletter background" 
+            className="absolute inset-0 h-full w-full object-cover" 
           />
-          <img src={bottleImg} alt="Featured wine bottle" className="relative z-10 h-full w-auto object-contain py-4 drop-shadow-2xl" />
         </div>
 
         <div className="px-8 py-10 text-center">
