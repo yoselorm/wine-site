@@ -1,6 +1,6 @@
 import React from 'react';
 import { Users, TrendingUp, Grape, ThumbsUp } from 'lucide-react';
-import heroImg from '../../assets/images/about/about-us-hero.jpg';
+import heroImg from '../../assets/images/about/about-us-hero.jpeg';
 import bannerAfterDiff from '../../assets/images/about/newabout-details1.jpg';
 import convenienceImg from '../../assets/images/about/convenience.jpg';
 import ownYourPalateImg from '../../assets/images/about/own-your-plate.jpg';
@@ -48,7 +48,7 @@ const About = () => {
     <div className="bg-cream min-h-screen">
       <section className="relative w-full flex items-center overflow-hidden py-20 md:py-28">
         <img src={heroImg} alt="Wine cellar" className="absolute inset-0 w-full h-full object-cover" />
-        <div className="absolute inset-0 bg-black/70" />
+        <div className="absolute inset-0 bg-black/40" />
         <div className="relative z-10 px-6 max-w-7xl mx-auto w-full">
           <div className="max-w-xl">
             <p className="text-xs text-white/80 mb-3">About Us</p>
